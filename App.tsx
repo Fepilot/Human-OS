@@ -1,26 +1,22 @@
 
 import React, { useState, useCallback } from 'react';
 import { 
-  User, 
-  Wind, 
-  Sparkles, 
-  Compass, 
-  Heart, 
   ArrowRight, 
   ArrowLeft, 
   Rocket, 
   Orbit, 
-  Trophy,
-  Download,
-  RotateCcw,
-  Loader2,
-  CheckCircle2,
-  Cpu,
-  FlaskConical,
-  Check,
-  AlertTriangle,
-  Lightbulb,
-  ShieldAlert
+  Download, 
+  RotateCcw, 
+  Loader2, 
+  CheckCircle2, 
+  Cpu, 
+  FlaskConical, 
+  Check, 
+  AlertTriangle, 
+  Lightbulb, 
+  ShieldAlert,
+  Sparkles,
+  Compass
 } from 'lucide-react';
 import { jsPDF } from 'jspdf';
 import { DiagnosticFormData, AnalysisResult } from './types';
@@ -163,41 +159,46 @@ const App: React.FC = () => {
     const addTitle = (text: string) => {
       checkPageBreak(15);
       doc.setFont('helvetica', 'bold');
-      doc.setFontSize(18);
-      doc.setTextColor(30, 41, 59); // Slate 800
+      doc.setFontSize(20);
+      doc.setTextColor(15, 23, 42); // Navy dark
       doc.text(text, margin, y);
-      y += 10;
+      y += 12;
     };
 
     const addSectionHeader = (text: string, color: [number, number, number] = [79, 70, 229]) => {
-      checkPageBreak(15);
+      checkPageBreak(20);
       doc.setFont('helvetica', 'bold');
-      doc.setFontSize(12);
+      doc.setFontSize(13);
       doc.setTextColor(color[0], color[1], color[2]);
       doc.text(text.toUpperCase(), margin, y);
-      y += 6;
+      y += 5;
       doc.setDrawColor(color[0], color[1], color[2]);
       doc.setLineWidth(0.5);
-      doc.line(margin, y, margin + 40, y);
+      doc.line(margin, y, margin + 50, y);
       y += 10;
     };
 
     const addBodyText = (text: string, fontSize = 10, isItalic = false) => {
       doc.setFont('helvetica', isItalic ? 'italic' : 'normal');
       doc.setFontSize(fontSize);
-      doc.setTextColor(71, 85, 105); // Slate 600
-      const splitText = doc.splitTextToSize(text || 'Sin información', contentWidth);
-      checkPageBreak(splitText.length * 5 + 5);
+      doc.setTextColor(51, 65, 85);
+      const val = text || 'N/A';
+      const splitText = doc.splitTextToSize(val, contentWidth);
+      checkPageBreak(splitText.length * 6 + 5);
       doc.text(splitText, margin, y);
-      y += splitText.length * 5 + 8;
+      y += splitText.length * 6 + 4;
     };
 
     const addBulletList = (items: string[]) => {
+      if (!items || items.length === 0) {
+        addBodyText("No hay datos para esta sección.");
+        return;
+      }
       items.forEach(item => {
         doc.setFont('helvetica', 'normal');
         doc.setFontSize(10);
         doc.setTextColor(71, 85, 105);
-        const splitItem = doc.splitTextToSize(`• ${item}`, contentWidth - 5);
+        const splitItem = doc.splitTextToSize(`- ${item}`, contentWidth - 10);
         checkPageBreak(splitItem.length * 5 + 2);
         doc.text(splitItem, margin + 5, y);
         y += splitItem.length * 5 + 2;
@@ -205,63 +206,67 @@ const App: React.FC = () => {
       y += 5;
     };
 
-    // --- Page 1: Mission Briefing ---
-    addTitle(`HUMAN-OS // Mission Briefing`);
-    addBodyText(`Tripulante: ${formData.nombre}`, 12);
-    addBodyText(`Match Score: ${result.fitScore}%`, 11);
+    // --- PÁGINA 1: BRIEFING ---
+    addTitle(`MISSION BRIEFING: ${formData.nombre}`);
+    addBodyText(`Match con Filosofía Human-OS: ${result.fitScore}%`, 12);
+    addBodyText(`Perfil Asignado: ${result.fitType}`, 11, true);
     
-    addSectionHeader("Diagnóstico del Sistema");
-    addBodyText(result.summary, 10, true);
+    addSectionHeader("Diagnóstico General");
+    addBodyText(result.summary, 10);
 
-    addSectionHeader("Fortalezas (Potencial)", [16, 185, 129]); // Emerald 500
+    addSectionHeader("Fortalezas", [16, 185, 129]); // Verde
     addBulletList(result.strengths);
 
-    addSectionHeader("Debilidades (Bugs)", [239, 68, 68]); // Red 500
+    addSectionHeader("Debilidades", [239, 68, 68]); // Rojo
     addBulletList(result.weaknesses);
 
-    addSectionHeader("Oportunidades", [245, 158, 11]); // Amber 500
+    addSectionHeader("Oportunidades", [245, 158, 11]); // Ambar
     addBulletList(result.opportunities);
 
-    addSectionHeader("Amenazas (Miedos)", [139, 92, 246]); // Violet 500
+    addSectionHeader("Amenazas", [139, 92, 246]); // Violeta
     addBulletList(result.threats);
 
-    addSectionHeader("Ruta de Re-incubación", [79, 70, 229]); // Indigo 600
+    addSectionHeader("Ruta de Re-incubación", [79, 70, 229]); // Indigo
     addBulletList(result.recommendations);
 
-    // --- Page 2: User Responses ---
+    // --- PÁGINA 2: RESPUESTAS ---
     doc.addPage();
     y = 20;
-    addTitle("Registro de Respuestas");
+    addTitle("Registro Completo de Respuestas");
     
     const sections = [
       { label: 'Rol actual', value: formData.rol },
       { label: 'Años de experiencia', value: formData.años },
-      { label: 'Crashes y crisis', value: formData.crashes },
-      { label: 'Procesos que drenan energía', value: formData.procesos_colgados },
-      { label: 'Creencias limitantes (Malware)', value: formData.malware },
-      { label: 'Logros y orgullo', value: formData.logros },
-      { label: 'Actividades de flujo', value: formData.disfrute },
-      { label: 'Talentos naturales', value: formData.talentos_naturales },
-      { label: 'Valores clave', value: formData.valores.join(', ') },
-      { label: 'Explicación valores', value: formData.valores_top3 },
-      { label: 'Motivo del cambio (Trigger)', value: formData.trigger },
+      { label: 'Crisis/Crashes', value: formData.crashes },
+      { label: 'Procesos colgados', value: formData.procesos_colgados },
+      { label: 'Sombras/Creencias', value: formData.malware },
+      { label: 'Hitos principales', value: formData.logros },
+      { label: 'Disfrute/Flujo', value: formData.disfrute },
+      { label: 'Talento natural', value: formData.talentos_naturales },
+      { label: 'Valores', value: formData.valores.join(', ') },
+      { label: 'Valores TOP 3', value: formData.valores_top3 },
+      { label: 'Disparador de cambio', value: formData.trigger },
       { label: 'Visión a 2 años', value: formData.vision_2años },
       { label: 'Miedo mayor', value: formData.miedo_mayor },
-      { label: 'Expectativa de la sesión', value: formData.expectativa_sesion },
+      { label: 'Claridad', value: formData.claridad_que },
+      { label: 'Búsqueda', value: formData.busca_principal },
+      { label: 'Estado emocional', value: formData.estado_emocional },
+      { label: 'Experiencia previa', value: formData.experiencia_previa },
+      { label: 'Expectativa sesión', value: formData.expectativa_sesion },
     ];
 
     sections.forEach(sec => {
-      checkPageBreak(15);
+      checkPageBreak(18);
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(9);
       doc.setTextColor(30, 41, 59);
       doc.text(sec.label.toUpperCase(), margin, y);
-      y += 5;
-      addBodyText(sec.value, 10);
-      y += 2;
+      y += 6;
+      addBodyText(sec.value || 'N/A', 10);
+      y += 4;
     });
 
-    doc.save(`HumanOS_Briefing_${formData.nombre.replace(/\s/g, '_')}.pdf`);
+    doc.save(`Briefing_HumanOS_${formData.nombre.replace(/\s/g, '_')}.pdf`);
   }, [result, formData]);
 
   const renderLanding = () => (
@@ -340,7 +345,7 @@ const App: React.FC = () => {
           ))}
         </div>
         <InputGroup label="Si tuvieras que elegir SOLO 3 de los anteriores, ¿cuáles y por qué? *">
-          <textarea className="input-vibrant w-full min-h-[120px]" value={formData.valores_top3} onChange={e => updateField('valores_top3', e.target.value)} placeholder="Escribe los 3 valores más importantes y explica por qué..." />
+          <textarea className="input-vibrant w-full min-h-[120px]" value={formData.valores_top3} onChange={e => updateField('valores_top3', e.target.value)} placeholder="Escribe los 3 valores más importantes..." />
         </InputGroup>
       </div>
     </StepLayout>
@@ -393,7 +398,7 @@ const App: React.FC = () => {
         </InputGroup>
 
         <InputGroup label="¿Has trabajado antes con un coach, terapeuta o mentor? *">
-          <textarea className="input-vibrant w-full min-h-[100px]" value={formData.experiencia_previa} onChange={e => updateField('experiencia_previa', e.target.value)} placeholder="Cuéntame brevemente tu experiencia..." />
+          <textarea className="input-vibrant w-full min-h-[100px]" value={formData.experiencia_previa} onChange={e => updateField('experiencia_previa', e.target.value)} placeholder="Experiencia previa..." />
         </InputGroup>
 
         <InputGroup label="¿Qué esperas que pase después de nuestra sesión? *">
@@ -409,7 +414,7 @@ const App: React.FC = () => {
         {isAnalyzing ? (
           <div className="flex flex-col items-center justify-center py-24 text-center">
             <Loader2 className="w-20 h-20 text-indigo-400 animate-spin mb-8" />
-            <h2 className="text-3xl font-space text-white mb-2">GENERANDO BRIEFING...</h2>
+            <h2 className="text-3xl font-space text-white mb-2 text-glow">PROCESANDO DATOS...</h2>
             <p className="text-slate-400">Cruzando tus respuestas con la matriz Human-OS.</p>
           </div>
         ) : (
@@ -426,80 +431,51 @@ const App: React.FC = () => {
             </div>
 
             <div className="space-y-10">
-              {/* Diagnóstico Section */}
-              <section className="bg-white/5 p-8 rounded-3xl border border-white/10">
-                <h3 className="text-indigo-300 mb-4 font-space uppercase tracking-widest text-sm font-bold flex items-center gap-2">
-                  <Cpu className="w-5 h-5" /> Diagnóstico del Sistema
-                </h3>
-                <p className="text-slate-200 leading-relaxed italic text-lg">"{result?.summary}"</p>
-              </section>
-
-              {/* SWOT Grid */}
+              {/* SWOT Section */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="p-6 rounded-2xl bg-emerald-500/10 border border-emerald-500/20">
                   <h4 className="text-emerald-400 font-bold mb-3 flex items-center gap-2 uppercase text-xs tracking-widest">
                     <Sparkles className="w-4 h-4" /> Fortalezas
                   </h4>
                   <ul className="space-y-2">
-                    {result?.strengths.map((s, i) => (
-                      <li key={i} className="text-sm text-slate-300 flex gap-2">
-                        <span className="text-emerald-500">•</span> {s}
-                      </li>
-                    ))}
+                    {result?.strengths.map((s, i) => (<li key={i} className="text-sm text-slate-300 flex gap-2"><span className="text-emerald-500">•</span> {s}</li>))}
                   </ul>
                 </div>
-
                 <div className="p-6 rounded-2xl bg-red-500/10 border border-red-500/20">
                   <h4 className="text-red-400 font-bold mb-3 flex items-center gap-2 uppercase text-xs tracking-widest">
                     <AlertTriangle className="w-4 h-4" /> Debilidades
                   </h4>
                   <ul className="space-y-2">
-                    {result?.weaknesses.map((w, i) => (
-                      <li key={i} className="text-sm text-slate-300 flex gap-2">
-                        <span className="text-red-500">•</span> {w}
-                      </li>
-                    ))}
+                    {result?.weaknesses.map((w, i) => (<li key={i} className="text-sm text-slate-300 flex gap-2"><span className="text-red-500">•</span> {w}</li>))}
                   </ul>
                 </div>
-
                 <div className="p-6 rounded-2xl bg-amber-500/10 border border-amber-500/20">
                   <h4 className="text-amber-400 font-bold mb-3 flex items-center gap-2 uppercase text-xs tracking-widest">
                     <Lightbulb className="w-4 h-4" /> Oportunidades
                   </h4>
                   <ul className="space-y-2">
-                    {result?.opportunities.map((o, i) => (
-                      <li key={i} className="text-sm text-slate-300 flex gap-2">
-                        <span className="text-amber-500">•</span> {o}
-                      </li>
-                    ))}
+                    {result?.opportunities.map((o, i) => (<li key={i} className="text-sm text-slate-300 flex gap-2"><span className="text-amber-500">•</span> {o}</li>))}
                   </ul>
                 </div>
-
                 <div className="p-6 rounded-2xl bg-violet-500/10 border border-violet-500/20">
                   <h4 className="text-violet-400 font-bold mb-3 flex items-center gap-2 uppercase text-xs tracking-widest">
                     <ShieldAlert className="w-4 h-4" /> Amenazas
                   </h4>
                   <ul className="space-y-2">
-                    {result?.threats.map((t, i) => (
-                      <li key={i} className="text-sm text-slate-300 flex gap-2">
-                        <span className="text-violet-500">•</span> {t}
-                      </li>
-                    ))}
+                    {result?.threats.map((t, i) => (<li key={i} className="text-sm text-slate-300 flex gap-2"><span className="text-violet-500">•</span> {t}</li>))}
                   </ul>
                 </div>
               </div>
 
-              {/* Roadmap Section */}
+              {/* Roadmap */}
               <section className="bg-indigo-500/5 p-8 rounded-3xl border border-indigo-500/20">
                 <h3 className="text-indigo-300 mb-6 font-space uppercase tracking-widest text-sm font-bold flex items-center gap-2">
-                  <Compass className="w-5 h-5" /> Ruta de Re-incubación (High-Level)
+                  <Compass className="w-5 h-5" /> Tu Hoja de Ruta Sugerida
                 </h3>
                 <div className="space-y-4">
                   {result?.recommendations.map((r, i) => (
                     <div key={i} className="flex gap-4 items-start bg-slate-900/40 p-4 rounded-xl border border-white/5">
-                      <div className="w-6 h-6 rounded-full bg-indigo-500 text-white text-xs flex items-center justify-center shrink-0 font-bold">
-                        {i + 1}
-                      </div>
+                      <div className="w-6 h-6 rounded-full bg-indigo-500 text-white text-xs flex items-center justify-center shrink-0 font-bold">{i + 1}</div>
                       <p className="text-sm text-slate-200">{r}</p>
                     </div>
                   ))}
@@ -509,7 +485,7 @@ const App: React.FC = () => {
 
             <div className="flex flex-col md:flex-row gap-4 pt-10 border-t border-white/10">
               <button onClick={generatePDFReport} className="flex-1 py-6 flex items-center justify-center gap-3 btn-navigation rounded-2xl shadow-2xl text-lg">
-                <Download className="w-6 h-6" /> DESCARGAR BRIEFING COMPLETO (PDF)
+                <Download className="w-6 h-6" /> DESCARGAR DOSSIER COMPLETO (PDF)
               </button>
               <button onClick={() => setStep(-1)} className="px-10 py-6 flex items-center justify-center gap-3 bg-white/5 text-white font-bold rounded-2xl hover:bg-white/10 transition-all">
                 <RotateCcw className="w-6 h-6" /> REINICIAR
@@ -522,7 +498,7 @@ const App: React.FC = () => {
   );
 
   return (
-    <div className="min-h-screen text-slate-100 selection:bg-indigo-500/40">
+    <div className="min-h-screen text-slate-100">
       {step === -1 && renderLanding()}
       {step === 0 && renderDiagnosticStart()}
       {step >= 1 && step <= 6 && (

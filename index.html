@@ -61,18 +61,22 @@
             transform: translateY(-2px);
             box-shadow: 0 10px 20px rgba(125, 211, 252, 0.3);
         }
+        /* Corregido: Forzar fondo oscuro y letra blanca en inputs y textareas */
         .input-vibrant {
-            background: rgba(15, 23, 42, 0.7);
+            background: rgba(15, 23, 42, 0.8) !important;
             border: 1px solid rgba(125, 211, 252, 0.3);
             border-radius: 0.75rem;
             padding: 1rem;
-            color: white;
+            color: white !important;
             transition: all 0.3s ease;
+        }
+        .input-vibrant::placeholder {
+            color: rgba(255, 255, 255, 0.3);
         }
         .input-vibrant:focus {
             outline: none;
             border-color: #7dd3fc;
-            background: rgba(15, 23, 42, 0.9);
+            background: rgba(15, 23, 42, 1) !important;
             box-shadow: 0 0 0 4px rgba(125, 211, 252, 0.1);
         }
         .text-glow {
@@ -95,8 +99,6 @@
             font-family: 'Space Grotesk', sans-serif;
             background: rgba(15, 23, 42, 0.5);
         }
-        
-        /* Custom Checkbox/Radio styles */
         .custom-radio {
             position: relative;
             cursor: pointer;
@@ -172,5 +174,7 @@
         }
     </script>
     <div id="root"></div>
+    <!-- ¡IMPORTANTE! Este es el tag que faltaba para cargar la app -->
+    <script type="module" src="./index.tsx"></script>
 </body>
 </html>
