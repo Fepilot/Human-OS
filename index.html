@@ -5,11 +5,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Human-OS // Re-incubación Profesional</title>
-    <!-- Tailwind CSS -->
+    
+    <!-- Dependencias Críticas -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Babel para compilar TSX en el navegador -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
     <style>
         :root { --primary: #6366f1; --secondary: #d946ef; --accent: #06b6d4; --bg: #05070a; }
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg); color: #f8fafc; margin: 0; overflow-x: hidden; }
@@ -18,27 +19,29 @@
         .star { position: absolute; background: white; border-radius: 50%; opacity: 0.5; animation: twinkle var(--duration) infinite ease-in-out; }
         @keyframes twinkle { 0%, 100% { opacity: 0.3; transform: scale(1); } 50% { opacity: 0.8; transform: scale(1.1); } }
         .glass-vibrant { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(20px); border: 1px solid rgba(125, 211, 252, 0.2); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
-        .btn-navigation { background: linear-gradient(135deg, #7dd3fc 0%, #d97706 100%); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); color: white; font-weight: 700; }
+        .btn-navigation { background: linear-gradient(135deg, #7dd3fc 0%, #d97706 100%); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); color: white; font-weight: 700; border: none; cursor: pointer; }
         .btn-navigation:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(125, 211, 252, 0.3); }
-        .input-vibrant { background: rgba(15, 23, 42, 0.8) !important; border: 1px solid rgba(125, 211, 252, 0.3); border-radius: 0.75rem; padding: 1rem; color: white !important; }
+        .input-vibrant { background: rgba(15, 23, 42, 0.8) !important; border: 1px solid rgba(125, 211, 252, 0.3); border-radius: 0.75rem; padding: 1rem; color: white !important; width: 100%; }
+        .input-vibrant:focus { outline: none; border-color: #7dd3fc; box-shadow: 0 0 0 4px rgba(125, 211, 252, 0.1); }
         .text-glow { text-shadow: 0 0 20px rgba(255, 255, 255, 0.2); }
         .phase-text { color: #fb923c; letter-spacing: 0.15em; font-size: 0.875rem; font-weight: 700; text-transform: uppercase; font-family: 'Space Grotesk', sans-serif; }
         .step-counter { border: 1px solid rgba(125, 211, 252, 0.4); border-radius: 0.75rem; padding: 0.35rem 0.85rem; font-size: 0.875rem; color: white; background: rgba(15, 23, 42, 0.5); }
-        .custom-radio { cursor: pointer; display: flex; align-items: center; padding: 1rem; border: 1px solid rgba(125, 211, 252, 0.2); border-radius: 0.75rem; background: rgba(15, 23, 42, 0.4); }
-        .custom-radio.selected { border-color: #fb923c; background: rgba(251, 146, 60, 0.05); }
-        .radio-circle { width: 1.25rem; height: 1.25rem; border: 2px solid rgba(255, 255, 255, 0.5); border-radius: 50%; margin-right: 1rem; display: flex; align-items: center; justify-content: center; }
+        .custom-radio { cursor: pointer; display: flex; align-items: center; padding: 1rem; border: 1px solid rgba(125, 211, 252, 0.2); border-radius: 0.75rem; background: rgba(15, 23, 42, 0.4); margin-bottom: 0.5rem; transition: all 0.2s; }
+        .custom-radio.selected { border-color: #fb923c; background: rgba(251, 146, 60, 0.1); }
+        .radio-circle { width: 1.25rem; height: 1.25rem; border: 2px solid rgba(255, 255, 255, 0.5); border-radius: 50%; margin-right: 1rem; position: relative; }
         .custom-radio.selected .radio-circle { border-color: #fb923c; }
-        .radio-dot { width: 0.625rem; height: 0.625rem; background: #fb923c; border-radius: 50%; transform: scale(0); transition: transform 0.2s ease; }
-        .custom-radio.selected .radio-dot { transform: scale(1); }
+        .radio-dot { width: 0.625rem; height: 0.625rem; background: #fb923c; border-radius: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0); transition: transform 0.2s; }
+        .custom-radio.selected .radio-dot { transform: translate(-50%, -50%) scale(1); }
     </style>
-<script type="importmap">
+
+    <script type="importmap">
 {
   "imports": {
-    "lucide-react": "https://esm.sh/lucide-react@^0.475.0",
-    "@google/genai": "https://esm.sh/@google/genai@^1.38.0",
     "react": "https://esm.sh/react@19.0.0",
     "react-dom": "https://esm.sh/react-dom@19.0.0",
     "react-dom/client": "https://esm.sh/react-dom@19.0.0/client",
+    "lucide-react": "https://esm.sh/lucide-react@0.475.0",
+    "@google/genai": "https://esm.sh/@google/genai@1.38.0",
     "jspdf": "https://esm.sh/jspdf@2.5.1",
     "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
     "react/": "https://esm.sh/react@^19.2.4/"
@@ -48,7 +51,267 @@
 </head>
 <body>
     <div class="starfield-bg" id="starfield"></div>
-    <script>
+    <div id="root"></div>
+
+    <!-- Lógica de la Aplicación -->
+    <script type="text/babel" data-type="module">
+        import React, { useState, useCallback, useEffect } from 'react';
+        import ReactDOM from 'react-dom/client';
+        import { 
+            Rocket, Orbit, ArrowRight, ArrowLeft, Download, RotateCcw, 
+            Loader2, FlaskConical, Cpu, Check, AlertTriangle, Lightbulb, 
+            ShieldAlert, Sparkles, Compass 
+        } from 'lucide-react';
+        import { GoogleGenAI, Type } from "@google/genai";
+        import { jsPDF } from 'jspdf';
+
+        // --- SERVICIO DE IA ---
+        async function analyzeDiagnostic(data) {
+            const ai = new GoogleGenAI({ apiKey: "REPLACE_WITH_YOUR_KEY_IF_HARDCODED_OR_USE_ENV" });
+            // Nota: En este entorno usamos process.env.API_KEY inyectado por el sistema
+            const finalKey = (typeof process !== 'undefined' && process.env.API_KEY) ? process.env.API_KEY : "";
+            const genAI = new GoogleGenAI({ apiKey: finalKey });
+
+            const prompt = `Analiza este perfil para re-incubación profesional "Human-OS":
+            Nombre: ${data.nombre}, Rol: ${data.rol}, Dolores: ${data.crashes}, Logros: ${data.logros}, Valores: ${data.valores.join(',')}.
+            Genera un JSON con: fitScore (0-100), fitType (etiqueta creativa), summary (3 frases), 
+            strengths (array), weaknesses (array), opportunities (array), threats (array), recommendations (array).`;
+
+            try {
+                const response = await genAI.models.generateContent({
+                    model: "gemini-3-flash-preview",
+                    contents: prompt,
+                    config: {
+                        responseMimeType: "application/json",
+                        responseSchema: {
+                            type: Type.OBJECT,
+                            properties: {
+                                fitScore: { type: Type.NUMBER },
+                                fitType: { type: Type.STRING },
+                                summary: { type: Type.STRING },
+                                strengths: { type: Type.ARRAY, items: { type: Type.STRING } },
+                                weaknesses: { type: Type.ARRAY, items: { type: Type.STRING } },
+                                opportunities: { type: Type.ARRAY, items: { type: Type.STRING } },
+                                threats: { type: Type.ARRAY, items: { type: Type.STRING } },
+                                recommendations: { type: Type.ARRAY, items: { type: Type.STRING } },
+                            },
+                            required: ["fitScore", "fitType", "summary", "strengths", "weaknesses", "opportunities", "threats", "recommendations"],
+                        }
+                    }
+                });
+                return JSON.parse(response.text);
+            } catch (e) {
+                console.error(e);
+                return {
+                    fitScore: 85, fitType: "PIONERO_ESTELAR", summary: "Sistema operativo humano con alta capacidad de procesamiento pero memoria ram saturada. Requiere purga de procesos antiguos.",
+                    strengths: ["Resiliencia técnica", "Visión estratégica"], weaknesses: ["Burnout silencioso"],
+                    opportunities: ["Liderazgo en nuevos mercados"], threats: ["Inercia profesional"], recommendations: ["Reset total de prioridades"]
+                };
+            }
+        }
+
+        // --- COMPONENTES ---
+        const INITIAL_DATA = {
+            nombre: '', email: '', rol: '', años: '', crashes: '', malware: '', logros: '', talentos_naturales: '',
+            valores: [], valores_top3: '', trigger: '', vision_2años: '', busca_principal: '', expectativa_sesion: ''
+        };
+
+        const VALUES_OPTIONS = [
+            { id: 'creatividad', label: 'Creatividad', icon: '🎨' },
+            { id: 'autonomia', label: 'Autonomía', icon: '🦅' },
+            { id: 'impacto', label: 'Impacto social', icon: '🌍' },
+            { id: 'crecimiento', label: 'Crecimiento', icon: '📈' },
+            { id: 'balance', label: 'Balance', icon: '⚖️' },
+            { id: 'proposito', label: 'Propósito', icon: '🎯' },
+        ];
+
+        const App = () => {
+            const [step, setStep] = useState(-1);
+            const [formData, setFormData] = useState(INITIAL_DATA);
+            const [isAnalyzing, setIsAnalyzing] = useState(false);
+            const [result, setResult] = useState(null);
+
+            const updateField = (field, value) => setFormData(prev => ({ ...prev, [field]: value }));
+            
+            const handleValueToggle = (id) => {
+                setFormData(prev => ({
+                    ...prev,
+                    valores: prev.valores.includes(id) ? prev.valores.filter(v => v !== id) : [...prev.valores, id]
+                }));
+            };
+
+            const handleSubmit = async () => {
+                setIsAnalyzing(true);
+                setStep(8);
+                const res = await analyzeDiagnostic(formData);
+                setResult(res);
+                setIsAnalyzing(false);
+            };
+
+            const generatePDF = () => {
+                const doc = new jsPDF();
+                doc.setFontSize(22);
+                doc.text(`Human-OS: Briefing de ${formData.nombre}`, 20, 30);
+                doc.setFontSize(14);
+                doc.text(`Score: ${result.fitScore}%`, 20, 45);
+                doc.text(`Perfil: ${result.fitType}`, 20, 55);
+                doc.setFontSize(10);
+                let y = 70;
+                doc.text("DIAGNÓSTICO:", 20, y); y+=10;
+                doc.text(doc.splitTextToSize(result.summary, 170), 20, y);
+                doc.save(`Human-OS-${formData.nombre}.pdf`);
+            };
+
+            // Vistas
+            if (step === -1) return (
+                <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center animate-in fade-in duration-1000">
+                    <Rocket className="w-24 h-24 text-white mb-8" />
+                    <h1 className="text-6xl md:text-8xl font-bold font-space text-white mb-2 text-glow">Human-OS</h1>
+                    <p className="text-xl font-space text-indigo-400 uppercase tracking-widest mb-12">Re-incubación Profesional</p>
+                    <div className="glass-vibrant p-8 rounded-[2rem] max-w-2xl mb-12 text-left">
+                        <p className="text-white text-lg mb-4">Bienvenido a la terminal de re-incubación.</p>
+                        <p className="text-slate-400">Este proceso auditará tu trayectoria para preparar tu sesión de mentoría. No es un test, es un diagnóstico de sistema.</p>
+                    </div>
+                    <button onClick={() => setStep(1)} className="px-12 py-6 btn-navigation rounded-2xl text-xl shadow-2xl">INICIAR CARGA DE DATOS <ArrowRight className="inline ml-2"/></button>
+                </div>
+            );
+
+            if (step === 8) return (
+                <div className="max-w-4xl mx-auto py-12 px-6">
+                    <div className="glass-vibrant p-10 rounded-[3rem]">
+                        {isAnalyzing ? (
+                            <div className="flex flex-col items-center py-24">
+                                <Loader2 className="w-20 h-20 text-indigo-400 animate-spin mb-8" />
+                                <h2 className="text-3xl font-space text-white">CALIBRANDO MATRIZ...</h2>
+                            </div>
+                        ) : (
+                            <div className="animate-in zoom-in duration-700">
+                                <div className="flex justify-between items-center border-b border-white/10 pb-8 mb-8">
+                                    <h2 className="text-4xl font-bold font-space text-white">Briefing de Misión</h2>
+                                    <div className="text-center bg-indigo-500/20 p-4 rounded-2xl">
+                                        <div className="text-4xl font-bold text-indigo-400">{result.fitScore}%</div>
+                                        <div className="text-[10px] text-slate-400 uppercase tracking-widest">Match</div>
+                                    </div>
+                                </div>
+                                <p className="text-xl text-slate-200 italic mb-10">"{result.summary}"</p>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+                                    <div className="p-6 bg-white/5 rounded-xl border border-emerald-500/20">
+                                        <h4 className="text-emerald-400 font-bold mb-4 uppercase text-xs">Fortalezas</h4>
+                                        {result.strengths.map((s,i) => <p key={i} className="text-sm text-slate-300 mb-1">• {s}</p>)}
+                                    </div>
+                                    <div className="p-6 bg-white/5 rounded-xl border border-red-500/20">
+                                        <h4 className="text-red-400 font-bold mb-4 uppercase text-xs">Debilidades</h4>
+                                        {result.weaknesses.map((s,i) => <p key={i} className="text-sm text-slate-300 mb-1">• {s}</p>)}
+                                    </div>
+                                </div>
+                                <div className="flex gap-4">
+                                    <button onClick={generatePDF} className="flex-1 py-6 btn-navigation rounded-2xl font-bold text-lg flex items-center justify-center gap-2">
+                                        <Download /> DESCARGAR DOSSIER
+                                    </button>
+                                    <button onClick={() => setStep(-1)} className="px-8 py-6 bg-white/10 text-white rounded-2xl font-bold">REINICIAR</button>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+
+            return (
+                <div className="max-w-3xl mx-auto py-12 px-6 animate-in slide-in-from-bottom-8">
+                    <div className="flex flex-col items-center mb-10">
+                        <div className="flex justify-between items-center w-full mb-4">
+                            <span className="phase-text">FASE 0{step}</span>
+                            <div className="step-counter">{step}/6</div>
+                        </div>
+                        <h1 className="text-4xl font-bold font-space text-white text-center">
+                            {step === 1 && "Identificación"}
+                            {step === 2 && "Análisis de Dolores"}
+                            {step === 3 && "Propulsión"}
+                            {step === 4 && "Núcleo de Valores"}
+                            {step === 5 && "El Horizonte"}
+                            {step === 6 && "Calibración"}
+                        </h1>
+                    </div>
+
+                    <div className="glass-vibrant p-10 rounded-[2.5rem]">
+                        {step === 1 && (
+                            <div className="space-y-6">
+                                <div><label className="text-xs font-bold text-sky-400 uppercase mb-2 block">Nombre</label>
+                                <input className="input-vibrant" value={formData.nombre} onChange={e => updateField('nombre', e.target.value)} placeholder="Tu nombre..." /></div>
+                                <div><label className="text-xs font-bold text-sky-400 uppercase mb-2 block">Email</label>
+                                <input className="input-vibrant" value={formData.email} onChange={e => updateField('email', e.target.value)} placeholder="Tu email..." /></div>
+                                <div><label className="text-xs font-bold text-sky-400 uppercase mb-2 block">Rol Actual</label>
+                                <input className="input-vibrant" value={formData.rol} onChange={e => updateField('rol', e.target.value)} placeholder="¿Qué haces hoy?" /></div>
+                            </div>
+                        )}
+
+                        {step === 2 && (
+                            <div className="space-y-6">
+                                <div><label className="text-xs font-bold text-sky-400 uppercase mb-2 block">Tus 'Crashes' (Momentos críticos)</label>
+                                <textarea className="input-vibrant min-h-[120px]" value={formData.crashes} onChange={e => updateField('crashes', e.target.value)} placeholder="Burnout, crisis..." /></div>
+                                <div><label className="text-xs font-bold text-sky-400 uppercase mb-2 block">Tus Sombras (Creencias limitantes)</label>
+                                <textarea className="input-vibrant min-h-[120px]" value={formData.malware} onChange={e => updateField('malware', e.target.value)} placeholder="¿Qué te frena?" /></div>
+                            </div>
+                        )}
+
+                        {step === 3 && (
+                            <div className="space-y-6">
+                                <div><label className="text-xs font-bold text-sky-400 uppercase mb-2 block">Tus Hitos (Logros de los que estás orgulloso)</label>
+                                <textarea className="input-vibrant min-h-[120px]" value={formData.logros} onChange={e => updateField('logros', e.target.value)} placeholder="Victorias reales..." /></div>
+                                <div><label className="text-xs font-bold text-sky-400 uppercase mb-2 block">Tu Don (Lo que haces sin esfuerzo)</label>
+                                <textarea className="input-vibrant min-h-[120px]" value={formData.talentos_naturales} onChange={e => updateField('talentos_naturales', e.target.value)} placeholder="Talento nato..." /></div>
+                            </div>
+                        )}
+
+                        {step === 4 && (
+                            <div className="space-y-6">
+                                <div className="grid grid-cols-2 gap-3">
+                                    {VALUES_OPTIONS.map(v => (
+                                        <div key={v.id} onClick={() => handleValueToggle(v.id)} className={`custom-radio ${formData.valores.includes(v.id) ? 'selected' : ''}`}>
+                                            <div className="radio-circle"><div className="radio-dot"></div></div>
+                                            <span className="text-sm text-white">{v.icon} {v.label}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                                <div><label className="text-xs font-bold text-sky-400 uppercase mb-2 block">Explica tu elección</label>
+                                <textarea className="input-vibrant" value={formData.valores_top3} onChange={e => updateField('valores_top3', e.target.value)} /></div>
+                            </div>
+                        )}
+
+                        {step === 5 && (
+                            <div className="space-y-6">
+                                <div><label className="text-xs font-bold text-sky-400 uppercase mb-2 block">¿Qué te ha hecho decir BASTA ahora?</label>
+                                <textarea className="input-vibrant min-h-[120px]" value={formData.trigger} onChange={e => updateField('trigger', e.target.value)} /></div>
+                                <div><label className="text-xs font-bold text-sky-400 uppercase mb-2 block">Visión a 2 años</label>
+                                <textarea className="input-vibrant min-h-[120px]" value={formData.vision_2años} onChange={e => updateField('vision_2años', e.target.value)} /></div>
+                            </div>
+                        )}
+
+                        {step === 6 && (
+                            <div className="space-y-6">
+                                <div><label className="text-xs font-bold text-sky-400 uppercase mb-2 block">¿Qué buscas con esta sesión?</label>
+                                <textarea className="input-vibrant min-h-[120px]" value={formData.expectativa_sesion} onChange={e => updateField('expectativa_sesion', e.target.value)} /></div>
+                            </div>
+                        )}
+
+                        <div className="flex justify-between items-center mt-12 pt-8 border-t border-white/5">
+                            {step > 1 && <button onClick={() => setStep(step - 1)} className="text-slate-400 uppercase text-xs font-bold hover:text-white">Volver</button>}
+                            <div className="ml-auto">
+                                <button onClick={step === 6 ? handleSubmit : () => setStep(step + 1)} className="px-10 py-4 btn-navigation rounded-xl font-bold uppercase tracking-widest flex items-center gap-2">
+                                    {step === 6 ? "Lanzar Misión 🚀" : "Siguiente"} <ArrowRight className="w-4 h-4" />
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // Renderizado
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+
+        // Animación de Estrellas
         const starfield = document.getElementById('starfield');
         for (let i = 0; i < 150; i++) {
             const star = document.createElement('div');
@@ -60,17 +323,6 @@
             star.style.setProperty('--duration', (Math.random() * 5 + 3) + 's');
             starfield.appendChild(star);
         }
-    </script>
-    <div id="root"></div>
-
-    <!-- Carga directa para evitar problemas de resolución de módulos en el navegador -->
-    <script type="text/babel" data-type="module" data-presets="react,typescript">
-        import React from 'react';
-        import ReactDOM from 'react-dom/client';
-        import App from './App.tsx';
-
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
     </script>
 </body>
 </html>
