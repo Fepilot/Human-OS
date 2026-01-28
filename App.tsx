@@ -20,7 +20,7 @@ import {
 } from 'lucide-react';
 import { jsPDF } from 'jspdf';
 import { DiagnosticFormData, AnalysisResult } from './types';
-import { analyzeDiagnostic } from './services/geminiService';
+import { analyzeDiagnostic } from './services/geminiService.tsx'; // Añadida extensión .tsx
 
 const INITIAL_DATA: DiagnosticFormData = {
   nombre: '',
@@ -160,7 +160,7 @@ const App: React.FC = () => {
       checkPageBreak(15);
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(20);
-      doc.setTextColor(15, 23, 42); // Navy dark
+      doc.setTextColor(15, 23, 42); 
       doc.text(text, margin, y);
       y += 12;
     };
@@ -206,7 +206,6 @@ const App: React.FC = () => {
       y += 5;
     };
 
-    // --- PÁGINA 1: BRIEFING ---
     addTitle(`MISSION BRIEFING: ${formData.nombre}`);
     addBodyText(`Match con Filosofía Human-OS: ${result.fitScore}%`, 12);
     addBodyText(`Perfil Asignado: ${result.fitType}`, 11, true);
@@ -214,22 +213,21 @@ const App: React.FC = () => {
     addSectionHeader("Diagnóstico General");
     addBodyText(result.summary, 10);
 
-    addSectionHeader("Fortalezas", [16, 185, 129]); // Verde
+    addSectionHeader("Fortalezas", [16, 185, 129]); 
     addBulletList(result.strengths);
 
-    addSectionHeader("Debilidades", [239, 68, 68]); // Rojo
+    addSectionHeader("Debilidades", [239, 68, 68]); 
     addBulletList(result.weaknesses);
 
-    addSectionHeader("Oportunidades", [245, 158, 11]); // Ambar
+    addSectionHeader("Oportunidades", [245, 158, 11]); 
     addBulletList(result.opportunities);
 
-    addSectionHeader("Amenazas", [139, 92, 246]); // Violeta
+    addSectionHeader("Amenazas", [139, 92, 246]); 
     addBulletList(result.threats);
 
-    addSectionHeader("Ruta de Re-incubación", [79, 70, 229]); // Indigo
+    addSectionHeader("Ruta de Re-incubación", [79, 70, 229]); 
     addBulletList(result.recommendations);
 
-    // --- PÁGINA 2: RESPUESTAS ---
     doc.addPage();
     y = 20;
     addTitle("Registro Completo de Respuestas");
@@ -431,7 +429,6 @@ const App: React.FC = () => {
             </div>
 
             <div className="space-y-10">
-              {/* SWOT Section */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="p-6 rounded-2xl bg-emerald-500/10 border border-emerald-500/20">
                   <h4 className="text-emerald-400 font-bold mb-3 flex items-center gap-2 uppercase text-xs tracking-widest">
@@ -467,7 +464,6 @@ const App: React.FC = () => {
                 </div>
               </div>
 
-              {/* Roadmap */}
               <section className="bg-indigo-500/5 p-8 rounded-3xl border border-indigo-500/20">
                 <h3 className="text-indigo-300 mb-6 font-space uppercase tracking-widest text-sm font-bold flex items-center gap-2">
                   <Compass className="w-5 h-5" /> Tu Hoja de Ruta Sugerida

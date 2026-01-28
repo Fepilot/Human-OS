@@ -5,7 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Human-OS // Re-incubación Profesional</title>
+    <!-- Tailwind CSS para el diseño -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Babel para compilar TSX en el navegador (Solución para GitHub Pages) -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -61,7 +64,6 @@
             transform: translateY(-2px);
             box-shadow: 0 10px 20px rgba(125, 211, 252, 0.3);
         }
-        /* Corregido: Forzar fondo oscuro y letra blanca en inputs y textareas */
         .input-vibrant {
             background: rgba(15, 23, 42, 0.8) !important;
             border: 1px solid rgba(125, 211, 252, 0.3);
@@ -149,10 +151,12 @@
   "imports": {
     "lucide-react": "https://esm.sh/lucide-react@^0.475.0",
     "@google/genai": "https://esm.sh/@google/genai@^1.38.0",
-    "react/": "https://esm.sh/react@^19.2.4/",
     "react": "https://esm.sh/react@^19.2.4",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
-    "jspdf": "https://esm.sh/jspdf@^4.0.0"
+    "react-dom": "https://esm.sh/react-dom@^19.2.4",
+    "react-dom/client": "https://esm.sh/react-dom@^19.2.4/client",
+    "jspdf": "https://esm.sh/jspdf@^4.0.0",
+    "react/": "https://esm.sh/react@^19.2.4/",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/"
   }
 }
 </script>
@@ -174,7 +178,10 @@
         }
     </script>
     <div id="root"></div>
-    <!-- ¡IMPORTANTE! Este es el tag que faltaba para cargar la app -->
-    <script type="module" src="./index.tsx"></script>
+    
+    <!-- Este script carga tu index.tsx y le pide a Babel que lo compile sobre la marcha -->
+    <script type="text/babel" data-type="module" data-presets="react,typescript">
+        import './index.tsx';
+    </script>
 </body>
 </html>
