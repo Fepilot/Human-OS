@@ -6,31 +6,91 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Human-OS // Re-incubación Profesional</title>
     
-    <!-- Dependencias Críticas -->
+    <!-- Dependencias -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
-        :root { --primary: #6366f1; --secondary: #d946ef; --accent: #06b6d4; --bg: #05070a; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg); color: #f8fafc; margin: 0; overflow-x: hidden; }
+        :root { 
+            --primary: #6366f1; 
+            --secondary: #d946ef; 
+            --accent: #06b6d4; 
+            --bg: #05070a; 
+        }
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background-color: var(--bg); 
+            color: #f8fafc; 
+            margin: 0; 
+            overflow-x: hidden; 
+        }
         .font-space { font-family: 'Space Grotesk', sans-serif; }
-        .starfield-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(ellipse at center, #0a1128 0%, #05070a 100%); overflow: hidden; }
-        .star { position: absolute; background: white; border-radius: 50%; opacity: 0.5; animation: twinkle var(--duration) infinite ease-in-out; }
-        @keyframes twinkle { 0%, 100% { opacity: 0.3; transform: scale(1); } 50% { opacity: 0.8; transform: scale(1.1); } }
-        .glass-vibrant { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(20px); border: 1px solid rgba(125, 211, 252, 0.2); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
-        .btn-navigation { background: linear-gradient(135deg, #7dd3fc 0%, #d97706 100%); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); color: white; font-weight: 700; border: none; cursor: pointer; }
-        .btn-navigation:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(125, 211, 252, 0.3); }
-        .input-vibrant { background: rgba(15, 23, 42, 0.8) !important; border: 1px solid rgba(125, 211, 252, 0.3); border-radius: 0.75rem; padding: 1rem; color: white !important; width: 100%; }
-        .input-vibrant:focus { outline: none; border-color: #7dd3fc; box-shadow: 0 0 0 4px rgba(125, 211, 252, 0.1); }
-        .text-glow { text-shadow: 0 0 20px rgba(255, 255, 255, 0.2); }
-        .phase-text { color: #fb923c; letter-spacing: 0.15em; font-size: 0.875rem; font-weight: 700; text-transform: uppercase; font-family: 'Space Grotesk', sans-serif; }
-        .step-counter { border: 1px solid rgba(125, 211, 252, 0.4); border-radius: 0.75rem; padding: 0.35rem 0.85rem; font-size: 0.875rem; color: white; background: rgba(15, 23, 42, 0.5); }
-        .custom-radio { cursor: pointer; display: flex; align-items: center; padding: 1rem; border: 1px solid rgba(125, 211, 252, 0.2); border-radius: 0.75rem; background: rgba(15, 23, 42, 0.4); margin-bottom: 0.5rem; transition: all 0.2s; }
+        
+        /* Fondo de estrellas dinámico */
+        .starfield-bg { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; 
+            background: radial-gradient(ellipse at center, #0a1128 0%, #05070a 100%); 
+            overflow: hidden; 
+        }
+        .star { 
+            position: absolute; background: white; border-radius: 50%; opacity: 0.5; 
+            animation: twinkle var(--duration) infinite ease-in-out; 
+        }
+        @keyframes twinkle { 
+            0%, 100% { opacity: 0.3; transform: scale(1); } 
+            50% { opacity: 0.8; transform: scale(1.1); } 
+        }
+
+        /* Efecto Cristal Vibrant */
+        .glass-vibrant { 
+            background: rgba(15, 23, 42, 0.6); 
+            backdrop-filter: blur(24px); 
+            border: 1px solid rgba(125, 211, 252, 0.15); 
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7); 
+        }
+
+        /* Botones y Navegación */
+        .btn-navigation { 
+            background: linear-gradient(135deg, #7dd3fc 0%, #6366f1 50%, #d946ef 100%); 
+            background-size: 200% auto;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            color: white; font-weight: 700; border: none; cursor: pointer;
+        }
+        .btn-navigation:hover { 
+            transform: translateY(-3px); 
+            background-position: right center;
+            box-shadow: 0 15px 30px rgba(99, 102, 241, 0.4); 
+        }
+        
+        /* Inputs Estilizados */
+        .input-vibrant { 
+            background: rgba(15, 23, 42, 0.8) !important; 
+            border: 1px solid rgba(125, 211, 252, 0.2); 
+            border-radius: 1rem; padding: 1.2rem; 
+            color: white !important; width: 100%; 
+            transition: all 0.3s ease;
+        }
+        .input-vibrant:focus { 
+            outline: none; border-color: #7dd3fc; 
+            box-shadow: 0 0 0 4px rgba(125, 211, 252, 0.1); 
+            background: rgba(15, 23, 42, 1) !important;
+        }
+
+        .text-glow { text-shadow: 0 0 20px rgba(125, 211, 252, 0.4); }
+        .phase-text { color: #fb923c; letter-spacing: 0.2em; font-size: 0.75rem; font-weight: 800; font-family: 'Space Grotesk', sans-serif; }
+        
+        /* Radios personalizados */
+        .custom-radio { 
+            cursor: pointer; display: flex; align-items: center; padding: 1.25rem; 
+            border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 1rem; 
+            background: rgba(15, 23, 42, 0.4); margin-bottom: 0.75rem; transition: all 0.2s ease; 
+        }
+        .custom-radio:hover { border-color: rgba(125, 211, 252, 0.4); background: rgba(15, 23, 42, 0.6); }
         .custom-radio.selected { border-color: #fb923c; background: rgba(251, 146, 60, 0.1); }
-        .radio-circle { width: 1.25rem; height: 1.25rem; border: 2px solid rgba(255, 255, 255, 0.5); border-radius: 50%; margin-right: 1rem; position: relative; }
+        .radio-circle { width: 1.25rem; height: 1.25rem; border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 50%; margin-right: 1rem; position: relative; }
         .custom-radio.selected .radio-circle { border-color: #fb923c; }
-        .radio-dot { width: 0.625rem; height: 0.625rem; background: #fb923c; border-radius: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0); transition: transform 0.2s; }
+        .radio-dot { width: 0.6rem; height: 0.6rem; background: #fb923c; border-radius: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0); transition: 0.2s; }
         .custom-radio.selected .radio-dot { transform: translate(-50%, -50%) scale(1); }
     </style>
 
@@ -53,162 +113,208 @@
     <div class="starfield-bg" id="starfield"></div>
     <div id="root"></div>
 
-    <!-- Lógica de la Aplicación -->
     <script type="text/babel" data-type="module">
         import React, { useState, useCallback, useEffect } from 'react';
         import ReactDOM from 'react-dom/client';
         import { 
             Rocket, Orbit, ArrowRight, ArrowLeft, Download, RotateCcw, 
             Loader2, FlaskConical, Cpu, Check, AlertTriangle, Lightbulb, 
-            ShieldAlert, Sparkles, Compass 
+            ShieldAlert, Sparkles, Compass, User, Zap, Target, Gauge
         } from 'lucide-react';
         import { GoogleGenAI, Type } from "@google/genai";
         import { jsPDF } from 'jspdf';
 
-        // --- SERVICIO DE IA ---
+        // --- SERVICIO GEMINI ---
         async function analyzeDiagnostic(data) {
-            const ai = new GoogleGenAI({ apiKey: "REPLACE_WITH_YOUR_KEY_IF_HARDCODED_OR_USE_ENV" });
-            // Nota: En este entorno usamos process.env.API_KEY inyectado por el sistema
             const finalKey = (typeof process !== 'undefined' && process.env.API_KEY) ? process.env.API_KEY : "";
             const genAI = new GoogleGenAI({ apiKey: finalKey });
 
-            const prompt = `Analiza este perfil para re-incubación profesional "Human-OS":
-            Nombre: ${data.nombre}, Rol: ${data.rol}, Dolores: ${data.crashes}, Logros: ${data.logros}, Valores: ${data.valores.join(',')}.
-            Genera un JSON con: fitScore (0-100), fitType (etiqueta creativa), summary (3 frases), 
-            strengths (array), weaknesses (array), opportunities (array), threats (array), recommendations (array).`;
+            const prompt = `Actúa como un experto en re-incubación profesional y IA. Analiza este perfil Human-OS:
+            Nombre: ${data.nombre}, Rol: ${data.rol}, Años: ${data.años}.
+            Bloqueos: ${data.crashes}, Sombras: ${data.malware}.
+            Talentos: ${data.talentos_naturales}, Logros: ${data.logros}.
+            Valores: ${data.valores.join(', ')}.
+            Visión: ${data.vision_2años}, Búsqueda: ${data.busca_principal}, Emoción: ${data.estado_emocional}.
+
+            Genera un reporte DAFO detallado en JSON:
+            {
+              "fitScore": (número 0-100),
+              "fitType": "Etiqueta creativa de perfil espacial",
+              "summary": "Resumen ejecutivo de 3 frases",
+              "strengths": ["fortaleza 1", "2", "3"],
+              "weaknesses": ["debilidad 1", "2", "3"],
+              "opportunities": ["oportunidad 1", "2", "3"],
+              "threats": ["amenaza 1", "2", "3"],
+              "recommendations": ["paso 1", "2", "3", "4"]
+            }`;
 
             try {
                 const response = await genAI.models.generateContent({
                     model: "gemini-3-flash-preview",
                     contents: prompt,
-                    config: {
-                        responseMimeType: "application/json",
-                        responseSchema: {
-                            type: Type.OBJECT,
-                            properties: {
-                                fitScore: { type: Type.NUMBER },
-                                fitType: { type: Type.STRING },
-                                summary: { type: Type.STRING },
-                                strengths: { type: Type.ARRAY, items: { type: Type.STRING } },
-                                weaknesses: { type: Type.ARRAY, items: { type: Type.STRING } },
-                                opportunities: { type: Type.ARRAY, items: { type: Type.STRING } },
-                                threats: { type: Type.ARRAY, items: { type: Type.STRING } },
-                                recommendations: { type: Type.ARRAY, items: { type: Type.STRING } },
-                            },
-                            required: ["fitScore", "fitType", "summary", "strengths", "weaknesses", "opportunities", "threats", "recommendations"],
-                        }
-                    }
+                    config: { responseMimeType: "application/json" }
                 });
                 return JSON.parse(response.text);
             } catch (e) {
-                console.error(e);
+                console.error("Error AI:", e);
                 return {
-                    fitScore: 85, fitType: "PIONERO_ESTELAR", summary: "Sistema operativo humano con alta capacidad de procesamiento pero memoria ram saturada. Requiere purga de procesos antiguos.",
-                    strengths: ["Resiliencia técnica", "Visión estratégica"], weaknesses: ["Burnout silencioso"],
-                    opportunities: ["Liderazgo en nuevos mercados"], threats: ["Inercia profesional"], recommendations: ["Reset total de prioridades"]
+                    fitScore: 82, fitType: "INGENIERO_DE_SUEÑOS_EN_ORBITA",
+                    summary: "Tu sistema operativo muestra una base de datos de logros sólida pero con procesos de fondo que drenan tu batería principal.",
+                    strengths: ["Capacidad de auto-auditoría", "Experiencia técnica acumulada"],
+                    weaknesses: ["Fricción en la toma de decisiones", "Saturación de procesos"],
+                    opportunities: ["Migración a roles de liderazgo creativo", "Optimización mediante IA"],
+                    threats: ["Inercia del entorno actual", "Miedo al despegue"],
+                    recommendations: ["Purga de tareas de baja energía", "Mapeo de nuevas coordenadas", "Sesión de despegue estratégico"]
                 };
             }
         }
 
-        // --- COMPONENTES ---
-        const INITIAL_DATA = {
-            nombre: '', email: '', rol: '', años: '', crashes: '', malware: '', logros: '', talentos_naturales: '',
-            valores: [], valores_top3: '', trigger: '', vision_2años: '', busca_principal: '', expectativa_sesion: ''
-        };
-
-        const VALUES_OPTIONS = [
+        // --- OPCIONES ---
+        const VALUES = [
             { id: 'creatividad', label: 'Creatividad', icon: '🎨' },
             { id: 'autonomia', label: 'Autonomía', icon: '🦅' },
             { id: 'impacto', label: 'Impacto social', icon: '🌍' },
             { id: 'crecimiento', label: 'Crecimiento', icon: '📈' },
             { id: 'balance', label: 'Balance', icon: '⚖️' },
+            { id: 'estabilidad', label: 'Estabilidad', icon: '🛡️' },
+            { id: 'reconocimiento', label: 'Reconocimiento', icon: '🏆' },
             { id: 'proposito', label: 'Propósito', icon: '🎯' },
         ];
 
+        const SEEKING_OPTIONS = [
+            { id: 'nuevo_trabajo', label: 'Un nuevo trabajo ya (cambio rápido)' },
+            { id: 'repensar', label: 'Repensar mi carrera completa' },
+            { id: 'emprender', label: 'Explorar un proyecto propio' },
+            { id: 'entenderme', label: 'Entenderme mejor a mí mismo' },
+        ];
+
+        const EMOTIONAL_OPTIONS = [
+            { id: 'agotado', label: 'Agotado/En crisis' },
+            { id: 'frustrado', label: 'Frustrado pero funcional' },
+            { id: 'inquieto', label: 'Inquieto y con curiosidad' },
+            { id: 'energizado', label: 'Energizado pero bloqueado' },
+        ];
+
+        // --- COMPONENTE PRINCIPAL ---
         const App = () => {
             const [step, setStep] = useState(-1);
-            const [formData, setFormData] = useState(INITIAL_DATA);
+            const [formData, setFormData] = useState({
+                nombre: '', email: '', rol: '', años: '', crashes: '', malware: '',
+                logros: '', talentos_naturales: '', valores: [], valores_top3: '',
+                trigger: '', vision_2años: '', busca_principal: '', estado_emocional: '', expectativa_sesion: ''
+            });
             const [isAnalyzing, setIsAnalyzing] = useState(false);
             const [result, setResult] = useState(null);
 
-            const updateField = (field, value) => setFormData(prev => ({ ...prev, [field]: value }));
-            
-            const handleValueToggle = (id) => {
-                setFormData(prev => ({
-                    ...prev,
-                    valores: prev.valores.includes(id) ? prev.valores.filter(v => v !== id) : [...prev.valores, id]
-                }));
-            };
+            const updateField = (f, v) => setFormData(p => ({ ...p, [f]: v }));
+            const toggleValue = (id) => updateField('valores', formData.valores.includes(id) ? formData.valores.filter(v => v !== id) : [...formData.valores, id]);
 
             const handleSubmit = async () => {
-                setIsAnalyzing(true);
-                setStep(8);
+                setIsAnalyzing(true); setStep(8);
                 const res = await analyzeDiagnostic(formData);
-                setResult(res);
-                setIsAnalyzing(false);
+                setResult(res); setIsAnalyzing(false);
             };
 
             const generatePDF = () => {
                 const doc = new jsPDF();
-                doc.setFontSize(22);
-                doc.text(`Human-OS: Briefing de ${formData.nombre}`, 20, 30);
-                doc.setFontSize(14);
-                doc.text(`Score: ${result.fitScore}%`, 20, 45);
-                doc.text(`Perfil: ${result.fitType}`, 20, 55);
-                doc.setFontSize(10);
-                let y = 70;
+                doc.setFontSize(22); doc.setTextColor(99, 102, 241);
+                doc.text(`MISSION BRIEFING: ${formData.nombre.toUpperCase()}`, 20, 30);
+                doc.setFontSize(12); doc.setTextColor(50, 50, 50);
+                doc.text(`Match Score: ${result.fitScore}% | Perfil: ${result.fitType}`, 20, 40);
+                doc.line(20, 45, 190, 45);
+                let y = 60;
                 doc.text("DIAGNÓSTICO:", 20, y); y+=10;
-                doc.text(doc.splitTextToSize(result.summary, 170), 20, y);
-                doc.save(`Human-OS-${formData.nombre}.pdf`);
+                doc.setFontSize(10); doc.text(doc.splitTextToSize(result.summary, 170), 20, y);
+                doc.save(`HumanOS_${formData.nombre}.pdf`);
             };
 
-            // Vistas
-            if (step === -1) return (
-                <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center animate-in fade-in duration-1000">
-                    <Rocket className="w-24 h-24 text-white mb-8" />
-                    <h1 className="text-6xl md:text-8xl font-bold font-space text-white mb-2 text-glow">Human-OS</h1>
-                    <p className="text-xl font-space text-indigo-400 uppercase tracking-widest mb-12">Re-incubación Profesional</p>
-                    <div className="glass-vibrant p-8 rounded-[2rem] max-w-2xl mb-12 text-left">
-                        <p className="text-white text-lg mb-4">Bienvenido a la terminal de re-incubación.</p>
-                        <p className="text-slate-400">Este proceso auditará tu trayectoria para preparar tu sesión de mentoría. No es un test, es un diagnóstico de sistema.</p>
+            // Progress Bar Rocket
+            const RocketProgress = ({ s }) => {
+                const progress = (s / 6) * 100;
+                return (
+                    <div className="flex flex-col items-center mb-12 w-full max-w-xs">
+                        <div className="relative w-full h-1 bg-white/10 rounded-full overflow-hidden">
+                            <div className="absolute h-full bg-gradient-to-r from-indigo-500 to-pink-500 transition-all duration-1000" style={{width: `${progress}%`}}></div>
+                        </div>
+                        <Rocket className="w-8 h-8 text-indigo-400 mt-4 transition-all duration-1000" style={{ transform: `translateX(${(progress - 50) * 2}px)` }} />
                     </div>
-                    <button onClick={() => setStep(1)} className="px-12 py-6 btn-navigation rounded-2xl text-xl shadow-2xl">INICIAR CARGA DE DATOS <ArrowRight className="inline ml-2"/></button>
+                );
+            };
+
+            // --- VISTAS ---
+
+            // LANDING
+            if (step === -1) return (
+                <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center max-w-5xl mx-auto animate-in fade-in duration-1000">
+                    <div className="relative mb-10">
+                        <div className="absolute inset-[-60px] bg-indigo-500/20 blur-[100px] rounded-full"></div>
+                        <Rocket className="w-24 h-24 text-white relative z-10 animate-bounce" />
+                    </div>
+                    <h1 className="text-7xl md:text-9xl font-bold font-space text-white mb-4 text-glow tracking-tighter">Human-OS</h1>
+                    <p className="text-2xl md:text-3xl font-space font-light text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-pink-400 uppercase tracking-widest mb-12">Re-incubación Profesional</p>
+                    <div className="glass-vibrant p-10 rounded-[3rem] text-left max-w-3xl mb-12 border-white/20">
+                        <p className="text-xl text-white font-medium mb-6">Bienvenido/a a la terminal de despegue.</p>
+                        <p className="text-slate-300 leading-relaxed text-lg">Este no es un formulario común. Es el inicio de tu <strong>auditoría de sistema</strong>. Vamos a mapear tus coordenadas actuales para asegurar que tu próxima misión sea la definitiva.</p>
+                    </div>
+                    <button onClick={() => setStep(1)} className="px-16 py-8 btn-navigation rounded-3xl text-2xl font-space shadow-2xl">INICIAR DIAGNÓSTICO <ArrowRight className="inline ml-3" /></button>
                 </div>
             );
 
+            // RESULTADOS
             if (step === 8) return (
-                <div className="max-w-4xl mx-auto py-12 px-6">
-                    <div className="glass-vibrant p-10 rounded-[3rem]">
+                <div className="max-w-5xl mx-auto py-12 px-6">
+                    <div className="glass-vibrant p-12 rounded-[4rem] relative overflow-hidden">
                         {isAnalyzing ? (
-                            <div className="flex flex-col items-center py-24">
-                                <Loader2 className="w-20 h-20 text-indigo-400 animate-spin mb-8" />
-                                <h2 className="text-3xl font-space text-white">CALIBRANDO MATRIZ...</h2>
+                            <div className="flex flex-col items-center justify-center py-32 text-center">
+                                <Loader2 className="w-24 h-24 text-indigo-400 animate-spin mb-10" />
+                                <h2 className="text-4xl font-space text-white mb-4 text-glow">SINCRONIZANDO CON LA IA...</h2>
+                                <p className="text-slate-400 text-lg">Procesando tus respuestas a través de la matriz de re-incubación.</p>
                             </div>
                         ) : (
-                            <div className="animate-in zoom-in duration-700">
-                                <div className="flex justify-between items-center border-b border-white/10 pb-8 mb-8">
-                                    <h2 className="text-4xl font-bold font-space text-white">Briefing de Misión</h2>
-                                    <div className="text-center bg-indigo-500/20 p-4 rounded-2xl">
-                                        <div className="text-4xl font-bold text-indigo-400">{result.fitScore}%</div>
-                                        <div className="text-[10px] text-slate-400 uppercase tracking-widest">Match</div>
+                            <div className="animate-in fade-in duration-1000">
+                                <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-white/10 pb-12 mb-12 gap-8">
+                                    <div>
+                                        <h2 className="text-5xl font-bold font-space text-white mb-3 text-glow">Mission Briefing</h2>
+                                        <p className="text-indigo-300 text-xl">Tripulante: <span className="font-bold text-white">{formData.nombre}</span></p>
+                                    </div>
+                                    <div className="bg-indigo-500/10 border border-indigo-500/30 p-8 rounded-[2.5rem] text-center min-w-[180px]">
+                                        <div className="text-[10px] text-slate-500 uppercase tracking-[0.2em] mb-2 font-bold">Human-OS Match</div>
+                                        <div className="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-br from-indigo-400 to-pink-400">{result.fitScore}%</div>
                                     </div>
                                 </div>
-                                <p className="text-xl text-slate-200 italic mb-10">"{result.summary}"</p>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
-                                    <div className="p-6 bg-white/5 rounded-xl border border-emerald-500/20">
-                                        <h4 className="text-emerald-400 font-bold mb-4 uppercase text-xs">Fortalezas</h4>
-                                        {result.strengths.map((s,i) => <p key={i} className="text-sm text-slate-300 mb-1">• {s}</p>)}
-                                    </div>
-                                    <div className="p-6 bg-white/5 rounded-xl border border-red-500/20">
-                                        <h4 className="text-red-400 font-bold mb-4 uppercase text-xs">Debilidades</h4>
-                                        {result.weaknesses.map((s,i) => <p key={i} className="text-sm text-slate-300 mb-1">• {s}</p>)}
+
+                                <div className="p-8 bg-white/5 rounded-3xl mb-12 border border-white/10 italic text-xl text-slate-200 leading-relaxed">
+                                    "{result.summary}"
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+                                    <ResultBox title="Fortalezas" color="text-emerald-400" bg="bg-emerald-500/10" border="border-emerald-500/20" icon={<Sparkles/>} items={result.strengths} />
+                                    <ResultBox title="Debilidades" color="text-red-400" bg="bg-red-500/10" border="border-red-500/20" icon={<AlertTriangle/>} items={result.weaknesses} />
+                                    <ResultBox title="Oportunidades" color="text-amber-400" bg="bg-amber-500/10" border="border-amber-500/20" icon={<Lightbulb/>} items={result.opportunities} />
+                                    <ResultBox title="Amenazas" color="text-violet-400" bg="bg-violet-500/10" border="border-violet-500/20" icon={<ShieldAlert/>} items={result.threats} />
+                                </div>
+
+                                <div className="bg-indigo-500/5 p-10 rounded-[3rem] border border-indigo-500/20 mb-12">
+                                    <h3 className="text-indigo-400 font-space uppercase tracking-widest text-sm font-bold mb-8 flex items-center gap-3">
+                                        <Compass className="w-6 h-6" /> Hoja de Ruta de Re-incubación
+                                    </h3>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        {result.recommendations.map((r, i) => (
+                                            <div key={i} className="flex gap-4 items-center bg-slate-900/60 p-5 rounded-2xl border border-white/5">
+                                                <div className="w-8 h-8 rounded-full bg-indigo-500 text-white flex items-center justify-center font-bold shrink-0">{i+1}</div>
+                                                <p className="text-slate-300 text-sm">{r}</p>
+                                            </div>
+                                        ))}
                                     </div>
                                 </div>
-                                <div className="flex gap-4">
-                                    <button onClick={generatePDF} className="flex-1 py-6 btn-navigation rounded-2xl font-bold text-lg flex items-center justify-center gap-2">
-                                        <Download /> DESCARGAR DOSSIER
+
+                                <div className="flex flex-col md:flex-row gap-6">
+                                    <button onClick={generatePDF} className="flex-1 py-8 btn-navigation rounded-3xl text-xl font-bold flex items-center justify-center gap-3 shadow-2xl">
+                                        <Download className="w-7 h-7" /> DESCARGAR DOSSIER COMPLETO (PDF)
                                     </button>
-                                    <button onClick={() => setStep(-1)} className="px-8 py-6 bg-white/10 text-white rounded-2xl font-bold">REINICIAR</button>
+                                    <button onClick={() => setStep(-1)} className="px-12 py-8 bg-white/5 text-white font-bold rounded-3xl hover:bg-white/10 transition-all border border-white/10">
+                                        <RotateCcw className="w-6 h-6" /> REINICIAR
+                                    </button>
                                 </div>
                             </div>
                         )}
@@ -216,89 +322,98 @@
                 </div>
             );
 
+            // PASOS DEL FORMULARIO
             return (
-                <div className="max-w-3xl mx-auto py-12 px-6 animate-in slide-in-from-bottom-8">
-                    <div className="flex flex-col items-center mb-10">
+                <div className="max-w-4xl mx-auto py-12 px-6 animate-in slide-in-from-bottom-10 duration-700">
+                    <div className="flex flex-col items-center mb-12">
+                        <RocketProgress s={step} />
                         <div className="flex justify-between items-center w-full mb-4">
-                            <span className="phase-text">FASE 0{step}</span>
-                            <div className="step-counter">{step}/6</div>
+                            <span className="phase-text uppercase tracking-[0.3em]">Fase 0{step} // {getPhaseName(step)}</span>
+                            <div className="step-counter font-bold">{step} de 6</div>
                         </div>
-                        <h1 className="text-4xl font-bold font-space text-white text-center">
-                            {step === 1 && "Identificación"}
-                            {step === 2 && "Análisis de Dolores"}
-                            {step === 3 && "Propulsión"}
-                            {step === 4 && "Núcleo de Valores"}
-                            {step === 5 && "El Horizonte"}
-                            {step === 6 && "Calibración"}
-                        </h1>
+                        <h1 className="text-5xl font-bold font-space text-white mb-2 text-glow">{getStepTitle(step)}</h1>
+                        <p className="text-slate-400 text-lg text-center max-w-lg">{getStepDesc(step)}</p>
                     </div>
 
-                    <div className="glass-vibrant p-10 rounded-[2.5rem]">
+                    <div className="glass-vibrant p-12 rounded-[3.5rem]">
                         {step === 1 && (
-                            <div className="space-y-6">
-                                <div><label className="text-xs font-bold text-sky-400 uppercase mb-2 block">Nombre</label>
-                                <input className="input-vibrant" value={formData.nombre} onChange={e => updateField('nombre', e.target.value)} placeholder="Tu nombre..." /></div>
-                                <div><label className="text-xs font-bold text-sky-400 uppercase mb-2 block">Email</label>
-                                <input className="input-vibrant" value={formData.email} onChange={e => updateField('email', e.target.value)} placeholder="Tu email..." /></div>
-                                <div><label className="text-xs font-bold text-sky-400 uppercase mb-2 block">Rol Actual</label>
-                                <input className="input-vibrant" value={formData.rol} onChange={e => updateField('rol', e.target.value)} placeholder="¿Qué haces hoy?" /></div>
+                            <div className="space-y-8">
+                                <FormInput label="¿Cómo te llamas?" field="nombre" val={formData.nombre} upd={updateField} ph="Tu nombre..." icon={<User/>} />
+                                <FormInput label="Email de contacto" field="email" val={formData.email} upd={updateField} ph="email@ejemplo.com" type="email" />
+                                <FormInput label="Tu rol profesional actual" field="rol" val={formData.rol} upd={updateField} ph="Ej: Senior Designer, Director IT..." />
+                                <FormInput label="¿Cuántos años llevas en esto?" field="años" val={formData.años} upd={updateField} ph="Ej: 10 años" />
                             </div>
                         )}
 
                         {step === 2 && (
-                            <div className="space-y-6">
-                                <div><label className="text-xs font-bold text-sky-400 uppercase mb-2 block">Tus 'Crashes' (Momentos críticos)</label>
-                                <textarea className="input-vibrant min-h-[120px]" value={formData.crashes} onChange={e => updateField('crashes', e.target.value)} placeholder="Burnout, crisis..." /></div>
-                                <div><label className="text-xs font-bold text-sky-400 uppercase mb-2 block">Tus Sombras (Creencias limitantes)</label>
-                                <textarea className="input-vibrant min-h-[120px]" value={formData.malware} onChange={e => updateField('malware', e.target.value)} placeholder="¿Qué te frena?" /></div>
+                            <div className="space-y-8">
+                                <FormTextarea label="Tus 'Crashes': Momentos en los que el sistema no pudo más" field="crashes" val={formData.crashes} upd={updateField} ph="Crisis, burnout, aburrimiento extremo..." />
+                                <FormTextarea label="Sombras: Esas voces o miedos que te dicen que no puedes cambiar" field="malware" val={formData.malware} ph="Creencias limitantes..." />
                             </div>
                         )}
 
                         {step === 3 && (
-                            <div className="space-y-6">
-                                <div><label className="text-xs font-bold text-sky-400 uppercase mb-2 block">Tus Hitos (Logros de los que estás orgulloso)</label>
-                                <textarea className="input-vibrant min-h-[120px]" value={formData.logros} onChange={e => updateField('logros', e.target.value)} placeholder="Victorias reales..." /></div>
-                                <div><label className="text-xs font-bold text-sky-400 uppercase mb-2 block">Tu Don (Lo que haces sin esfuerzo)</label>
-                                <textarea className="input-vibrant min-h-[120px]" value={formData.talentos_naturales} onChange={e => updateField('talentos_naturales', e.target.value)} placeholder="Talento nato..." /></div>
+                            <div className="space-y-8">
+                                <FormTextarea label="Tus Hitos: Logros de los que estás realmente orgulloso/a" field="logros" val={formData.logros} upd={updateField} ph="Momentos de impacto..." icon={<Zap/>} />
+                                <FormTextarea label="Tu Don: ¿Qué haces increíblemente bien casi sin esfuerzo?" field="talentos_naturales" val={formData.talentos_naturales} upd={updateField} ph="Talento nato..." />
                             </div>
                         )}
 
                         {step === 4 && (
-                            <div className="space-y-6">
-                                <div className="grid grid-cols-2 gap-3">
-                                    {VALUES_OPTIONS.map(v => (
-                                        <div key={v.id} onClick={() => handleValueToggle(v.id)} className={`custom-radio ${formData.valores.includes(v.id) ? 'selected' : ''}`}>
+                            <div className="space-y-10">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    {VALUES.map(v => (
+                                        <div key={v.id} onClick={() => toggleValue(v.id)} className={`custom-radio ${formData.valores.includes(v.id) ? 'selected' : ''}`}>
                                             <div className="radio-circle"><div className="radio-dot"></div></div>
-                                            <span className="text-sm text-white">{v.icon} {v.label}</span>
+                                            <span className="text-xl mr-3">{v.icon}</span>
+                                            <span className="text-white font-bold">{v.label}</span>
                                         </div>
                                     ))}
                                 </div>
-                                <div><label className="text-xs font-bold text-sky-400 uppercase mb-2 block">Explica tu elección</label>
-                                <textarea className="input-vibrant" value={formData.valores_top3} onChange={e => updateField('valores_top3', e.target.value)} /></div>
+                                <FormTextarea label="Si tuvieras que elegir SOLO 3, ¿cuáles serían y por qué?" field="valores_top3" val={formData.valores_top3} upd={updateField} />
                             </div>
                         )}
 
                         {step === 5 && (
-                            <div className="space-y-6">
-                                <div><label className="text-xs font-bold text-sky-400 uppercase mb-2 block">¿Qué te ha hecho decir BASTA ahora?</label>
-                                <textarea className="input-vibrant min-h-[120px]" value={formData.trigger} onChange={e => updateField('trigger', e.target.value)} /></div>
-                                <div><label className="text-xs font-bold text-sky-400 uppercase mb-2 block">Visión a 2 años</label>
-                                <textarea className="input-vibrant min-h-[120px]" value={formData.vision_2años} onChange={e => updateField('vision_2años', e.target.value)} /></div>
+                            <div className="space-y-8">
+                                <FormTextarea label="¿Qué te ha hecho decir BASTA en este momento?" field="trigger" val={formData.trigger} upd={updateField} ph="El disparador del cambio..." />
+                                <FormTextarea label="Visión 2.0: ¿Dónde quieres estar en 2 años?" field="vision_2años" val={formData.vision_2años} upd={updateField} ph="Tu futuro ideal re-incubado..." icon={<Target/>} />
                             </div>
                         )}
 
                         {step === 6 && (
-                            <div className="space-y-6">
-                                <div><label className="text-xs font-bold text-sky-400 uppercase mb-2 block">¿Qué buscas con esta sesión?</label>
-                                <textarea className="input-vibrant min-h-[120px]" value={formData.expectativa_sesion} onChange={e => updateField('expectativa_sesion', e.target.value)} /></div>
+                            <div className="space-y-10">
+                                <div className="space-y-4">
+                                    <label className="text-xs font-bold text-sky-400 uppercase tracking-widest">¿Qué buscas principalmente hoy?</label>
+                                    {SEEKING_OPTIONS.map(opt => (
+                                        <div key={opt.id} onClick={() => updateField('busca_principal', opt.id)} className={`custom-radio ${formData.busca_principal === opt.id ? 'selected' : ''}`}>
+                                            <div className="radio-circle"><div className="radio-dot"></div></div>
+                                            <span className="text-white">{opt.label}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                                <div className="space-y-4">
+                                    <label className="text-xs font-bold text-sky-400 uppercase tracking-widest">¿Cómo está tu batería emocional hoy?</label>
+                                    {EMOTIONAL_OPTIONS.map(opt => (
+                                        <div key={opt.id} onClick={() => updateField('estado_emocional', opt.id)} className={`custom-radio ${formData.estado_emocional === opt.id ? 'selected' : ''}`}>
+                                            <div className="radio-circle"><div className="radio-dot"></div></div>
+                                            <span className="text-white">{opt.label}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                                <FormTextarea label="¿Qué esperas que pase después de nuestra sesión?" field="expectativa_sesion" val={formData.expectativa_sesion} upd={updateField} />
                             </div>
                         )}
 
-                        <div className="flex justify-between items-center mt-12 pt-8 border-t border-white/5">
-                            {step > 1 && <button onClick={() => setStep(step - 1)} className="text-slate-400 uppercase text-xs font-bold hover:text-white">Volver</button>}
+                        <div className="flex justify-between items-center mt-16 pt-10 border-t border-white/5">
+                            {step > 1 && (
+                                <button onClick={() => setStep(step - 1)} className="flex items-center gap-2 text-slate-500 hover:text-white uppercase text-xs font-black transition-colors">
+                                    <ArrowLeft className="w-4 h-4" /> Volver
+                                </button>
+                            )}
                             <div className="ml-auto">
-                                <button onClick={step === 6 ? handleSubmit : () => setStep(step + 1)} className="px-10 py-4 btn-navigation rounded-xl font-bold uppercase tracking-widest flex items-center gap-2">
-                                    {step === 6 ? "Lanzar Misión 🚀" : "Siguiente"} <ArrowRight className="w-4 h-4" />
+                                <button onClick={step === 6 ? handleSubmit : () => setStep(step + 1)} className="px-12 py-5 btn-navigation rounded-2xl font-bold uppercase tracking-[0.1em] flex items-center gap-3 shadow-xl">
+                                    {step === 6 ? "Lanzar Misión 🚀" : "Continuar"} <ArrowRight className="w-5 h-5" />
                                 </button>
                             </div>
                         </div>
@@ -307,20 +422,66 @@
             );
         };
 
-        // Renderizado
+        // --- SUBCOMPONENTES ---
+        const ResultBox = ({ title, color, bg, border, icon, items }) => (
+            <div className={`p-8 rounded-[2.5rem] ${bg} border ${border} transition-transform hover:scale-[1.02] duration-300`}>
+                <h4 className={`font-bold mb-6 flex items-center gap-3 uppercase text-xs tracking-widest ${color}`}>
+                    <span className="p-2 bg-black/20 rounded-lg">{icon}</span> {title}
+                </h4>
+                <ul className="space-y-3">
+                    {items?.map((it, i) => (
+                        <li key={i} className="text-sm text-slate-300 flex gap-3 leading-relaxed">
+                            <span className={`${color} font-black`}>•</span> {it}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        );
+
+        const FormInput = ({ label, field, val, upd, ph, type = "text", icon }) => (
+            <div className="space-y-3">
+                <label className="text-xs font-bold text-sky-400 uppercase tracking-widest flex items-center gap-2">
+                    {icon} {label}
+                </label>
+                <input className="input-vibrant" type={type} value={val} onChange={e => upd(field, e.target.value)} placeholder={ph} />
+            </div>
+        );
+
+        const FormTextarea = ({ label, field, val, upd, ph, icon }) => (
+            <div className="space-y-3">
+                <label className="text-xs font-bold text-sky-400 uppercase tracking-widest flex items-center gap-2">
+                    {icon} {label}
+                </label>
+                <textarea className="input-vibrant min-h-[140px] resize-none" value={val} onChange={e => upd(field, e.target.value)} placeholder={ph} />
+            </div>
+        );
+
+        const getPhaseName = (s) => ["", "ID", "TURBULENCIAS", "PROPULSIÓN", "NÚCLEO", "HORIZONTE", "AJUSTES"][s];
+        const getStepTitle = (s) => ["", "Tu Identidad", "Análisis de Bloqueos", "Tus Capacidades", "Brújula de Valores", "Destino 2.0", "Calibración Final"][s];
+        const getStepDesc = (s) => [
+            "", 
+            "Información básica para tu reporte de tripulante.",
+            "Identifiquemos qué está drenando la energía de tu sistema.",
+            "Tu combustible humano: talentos nativos e hitos.",
+            "Tus valores son el centro de gravedad de tu trayectoria.",
+            "Visualizando la nueva historia que vamos a incubar.",
+            "Últimos ajustes para asegurar que puedo ayudarte al 100%."
+        ][s];
+
+        // --- INIT ---
         const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(<App />);
 
-        // Animación de Estrellas
+        // Estrellas
         const starfield = document.getElementById('starfield');
-        for (let i = 0; i < 150; i++) {
+        for (let i = 0; i < 200; i++) {
             const star = document.createElement('div');
             star.className = 'star';
             const size = (Math.random() * 2 + 1) + 'px';
             star.style.width = size; star.style.height = size;
             star.style.top = Math.random() * 100 + '%';
             star.style.left = Math.random() * 100 + '%';
-            star.style.setProperty('--duration', (Math.random() * 5 + 3) + 's');
+            star.style.setProperty('--duration', (Math.random() * 4 + 2) + 's');
             starfield.appendChild(star);
         }
     </script>
