@@ -19,8 +19,8 @@ import {
   Compass
 } from 'lucide-react';
 import { jsPDF } from 'jspdf';
-import { DiagnosticFormData, AnalysisResult } from './types';
-import { analyzeDiagnostic } from './services/geminiService.tsx'; // Añadida extensión .tsx
+import { DiagnosticFormData, AnalysisResult } from './types.ts';
+import { analyzeDiagnostic } from './services/geminiService.tsx'; 
 
 const INITIAL_DATA: DiagnosticFormData = {
   nombre: '',
@@ -135,9 +135,14 @@ const App: React.FC = () => {
     e.preventDefault();
     setIsAnalyzing(true);
     setStep(8);
-    const analysis = await analyzeDiagnostic(formData);
-    setResult(analysis);
-    setIsAnalyzing(false);
+    try {
+      const analysis = await analyzeDiagnostic(formData);
+      setResult(analysis);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsAnalyzing(false);
+    }
   };
 
   const generatePDFReport = useCallback(() => {
@@ -148,39 +153,27 @@ const App: React.FC = () => {
     let y = 30;
 
     const checkPageBreak = (h: number) => { 
-      if (y + h > 270) { 
-        doc.addPage(); 
-        y = 20; 
-        return true;
-      }
+      if (y + h > 270) { doc.addPage(); y = 20; return true; }
       return false;
     };
 
     const addTitle = (text: string) => {
       checkPageBreak(15);
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(20);
-      doc.setTextColor(15, 23, 42); 
-      doc.text(text, margin, y);
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(20);
+      doc.setTextColor(15, 23, 42); doc.text(text, margin, y);
       y += 12;
     };
 
     const addSectionHeader = (text: string, color: [number, number, number] = [79, 70, 229]) => {
       checkPageBreak(20);
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(13);
-      doc.setTextColor(color[0], color[1], color[2]);
-      doc.text(text.toUpperCase(), margin, y);
-      y += 5;
-      doc.setDrawColor(color[0], color[1], color[2]);
-      doc.setLineWidth(0.5);
-      doc.line(margin, y, margin + 50, y);
-      y += 10;
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(13);
+      doc.setTextColor(color[0], color[1], color[2]); doc.text(text.toUpperCase(), margin, y);
+      y += 5; doc.setDrawColor(color[0], color[1], color[2]); doc.setLineWidth(0.5);
+      doc.line(margin, y, margin + 50, y); y += 10;
     };
 
     const addBodyText = (text: string, fontSize = 10, isItalic = false) => {
-      doc.setFont('helvetica', isItalic ? 'italic' : 'normal');
-      doc.setFontSize(fontSize);
+      doc.setFont('helvetica', isItalic ? 'italic' : 'normal'); doc.setFontSize(fontSize);
       doc.setTextColor(51, 65, 85);
       const val = text || 'N/A';
       const splitText = doc.splitTextToSize(val, contentWidth);
@@ -190,14 +183,9 @@ const App: React.FC = () => {
     };
 
     const addBulletList = (items: string[]) => {
-      if (!items || items.length === 0) {
-        addBodyText("No hay datos para esta sección.");
-        return;
-      }
+      if (!items || items.length === 0) { addBodyText("N/A"); return; }
       items.forEach(item => {
-        doc.setFont('helvetica', 'normal');
-        doc.setFontSize(10);
-        doc.setTextColor(71, 85, 105);
+        doc.setFont('helvetica', 'normal'); doc.setFontSize(10); doc.setTextColor(71, 85, 105);
         const splitItem = doc.splitTextToSize(`- ${item}`, contentWidth - 10);
         checkPageBreak(splitItem.length * 5 + 2);
         doc.text(splitItem, margin + 5, y);
@@ -207,284 +195,154 @@ const App: React.FC = () => {
     };
 
     addTitle(`MISSION BRIEFING: ${formData.nombre}`);
-    addBodyText(`Match con Filosofía Human-OS: ${result.fitScore}%`, 12);
-    addBodyText(`Perfil Asignado: ${result.fitType}`, 11, true);
-    
+    addBodyText(`Match Score: ${result.fitScore}%`, 12);
     addSectionHeader("Diagnóstico General");
     addBodyText(result.summary, 10);
+    addSectionHeader("Fortalezas", [16, 185, 129]); addBulletList(result.strengths);
+    addSectionHeader("Debilidades", [239, 68, 68]); addBulletList(result.weaknesses);
+    addSectionHeader("Oportunidades", [245, 158, 11]); addBulletList(result.opportunities);
+    addSectionHeader("Amenazas", [139, 92, 246]); addBulletList(result.threats);
+    addSectionHeader("Recomendaciones", [79, 70, 229]); addBulletList(result.recommendations);
 
-    addSectionHeader("Fortalezas", [16, 185, 129]); 
-    addBulletList(result.strengths);
-
-    addSectionHeader("Debilidades", [239, 68, 68]); 
-    addBulletList(result.weaknesses);
-
-    addSectionHeader("Oportunidades", [245, 158, 11]); 
-    addBulletList(result.opportunities);
-
-    addSectionHeader("Amenazas", [139, 92, 246]); 
-    addBulletList(result.threats);
-
-    addSectionHeader("Ruta de Re-incubación", [79, 70, 229]); 
-    addBulletList(result.recommendations);
-
-    doc.addPage();
-    y = 20;
-    addTitle("Registro Completo de Respuestas");
-    
+    doc.addPage(); y = 20;
+    addTitle("Registro de Respuestas");
     const sections = [
-      { label: 'Rol actual', value: formData.rol },
-      { label: 'Años de experiencia', value: formData.años },
-      { label: 'Crisis/Crashes', value: formData.crashes },
-      { label: 'Procesos colgados', value: formData.procesos_colgados },
-      { label: 'Sombras/Creencias', value: formData.malware },
-      { label: 'Hitos principales', value: formData.logros },
-      { label: 'Disfrute/Flujo', value: formData.disfrute },
-      { label: 'Talento natural', value: formData.talentos_naturales },
+      { label: 'Rol', value: formData.rol },
+      { label: 'Años', value: formData.años },
+      { label: 'Crashes', value: formData.crashes },
+      { label: 'Hitos', value: formData.logros },
       { label: 'Valores', value: formData.valores.join(', ') },
-      { label: 'Valores TOP 3', value: formData.valores_top3 },
-      { label: 'Disparador de cambio', value: formData.trigger },
-      { label: 'Visión a 2 años', value: formData.vision_2años },
-      { label: 'Miedo mayor', value: formData.miedo_mayor },
-      { label: 'Claridad', value: formData.claridad_que },
-      { label: 'Búsqueda', value: formData.busca_principal },
-      { label: 'Estado emocional', value: formData.estado_emocional },
-      { label: 'Experiencia previa', value: formData.experiencia_previa },
-      { label: 'Expectativa sesión', value: formData.expectativa_sesion },
+      { label: 'Visión', value: formData.vision_2años },
     ];
-
     sections.forEach(sec => {
       checkPageBreak(18);
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(9);
-      doc.setTextColor(30, 41, 59);
-      doc.text(sec.label.toUpperCase(), margin, y);
-      y += 6;
-      addBodyText(sec.value || 'N/A', 10);
-      y += 4;
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(9); doc.text(sec.label.toUpperCase(), margin, y);
+      y += 6; addBodyText(sec.value || 'N/A', 10); y += 4;
     });
 
-    doc.save(`Briefing_HumanOS_${formData.nombre.replace(/\s/g, '_')}.pdf`);
+    doc.save(`Briefing_HumanOS_${formData.nombre}.pdf`);
   }, [result, formData]);
 
   const renderLanding = () => (
-    <div className="min-h-screen flex flex-col items-center justify-center px-6 text-center max-w-5xl mx-auto py-20 animate-in fade-in zoom-in duration-1000">
+    <div className="min-h-screen flex flex-col items-center justify-center px-6 text-center max-w-5xl mx-auto py-20 animate-in fade-in duration-1000">
       <div className="relative mb-12">
-        <div className="absolute inset-[-60px] bg-purple-500/20 blur-[120px] rounded-full animate-pulse"></div>
+        <div className="absolute inset-[-60px] bg-purple-500/20 blur-[120px] rounded-full"></div>
         <Rocket className="w-24 h-24 text-white relative z-10" />
       </div>
-      <div className="mb-4">
-        <h1 className="text-6xl md:text-8xl font-bold font-space text-white tracking-tighter mb-2 text-glow">Human-OS</h1>
-        <p className="text-2xl md:text-3xl font-space font-light text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-pink-400 tracking-widest uppercase">Re-incubación Profesional</p>
-      </div>
-      <div className="glass-vibrant p-8 md:p-12 rounded-[3rem] mb-12 text-left max-w-4xl border-white/20">
-        <p className="text-xl md:text-2xl text-white font-medium mb-6">Gracias por formar parte de este proceso y bienvenido/a a tu <span className="text-indigo-400">mentoría gratuita de 30 minutos.</span></p>
-        <p className="text-slate-300 leading-relaxed mb-8 text-lg">Esto no es coaching tradicional, no es terapia ni un curso de IA. Es una <span className="text-white font-semibold">mentoría de re-incubación profesional</span> diseñada para quienes sienten que el piloto automático ya no es suficiente.</p>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-          <div className="flex gap-4"><FlaskConical className="w-12 h-12 text-pink-400 shrink-0" /><p className="text-slate-400 text-sm">Vengo de departamentos de incubación de grandes tecnológicas donde convertimos ideas en productos viables.</p></div>
-          <div className="flex gap-4"><Cpu className="w-12 h-12 text-indigo-400 shrink-0" /><p className="text-slate-400 text-sm"><span className="text-white font-bold">HUMAN-OS</span> aplica esos mismos principios a tu carrera: Tu trayectoria como un experimento. Humano + Tecnología.</p></div>
+      <h1 className="text-6xl md:text-8xl font-bold font-space text-white mb-2 text-glow">Human-OS</h1>
+      <p className="text-2xl font-space font-light text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-pink-400 uppercase tracking-widest mb-12">Re-incubación Profesional</p>
+      <div className="glass-vibrant p-10 rounded-[3rem] mb-12 text-left max-w-4xl">
+        <p className="text-xl text-white mb-6">Bienvenido/a a tu <span className="text-indigo-400">mentoría de re-incubación.</span></p>
+        <p className="text-slate-300 leading-relaxed text-lg mb-8">Este diagnóstico es el primer paso para resetear tu trayectoria profesional usando metodologías de incubación de productos tecnológicos.</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="flex gap-4 text-slate-400 text-sm"><FlaskConical className="w-8 h-8 text-pink-400 shrink-0" /> Mentoría basada en 15 años de experiencia en tech.</div>
+          <div className="flex gap-4 text-slate-400 text-sm"><Cpu className="w-8 h-8 text-indigo-400 shrink-0" /> Enfoque en optimizar tu "Sistema Operativo" humano.</div>
         </div>
       </div>
-      <button onClick={() => setStep(0)} className="px-12 py-6 btn-navigation rounded-2xl text-xl font-space tracking-tight shadow-2xl">REGISTRO DE TRIPULANTE A HUMAN-OS <ArrowRight className="inline-block ml-3" /></button>
-    </div>
-  );
-
-  const renderDiagnosticStart = () => (
-    <div className="flex flex-col items-center justify-center min-h-screen text-center px-6 py-20">
-      <div className="relative mb-12"><Orbit className="w-24 h-24 text-indigo-400 relative z-10" /></div>
-      <h1 className="text-4xl font-space font-bold text-white mb-4">INICIANDO DIAGNÓSTICO</h1>
-      <p className="text-slate-400 mb-10 max-w-md">Analizando la matriz de datos para preparar la sesión con Fer.</p>
-      <div className="w-full max-w-md h-1.5 bg-white/5 rounded-full overflow-hidden mb-12"><div className="h-full bg-gradient-to-r from-indigo-500 via-pink-500 to-indigo-500 animate-[progress_3s_ease-in-out]"></div></div>
-      <button onClick={nextStep} className="px-12 py-5 btn-navigation rounded-2xl font-space text-lg shadow-xl">COMENZAR REGISTRO DE MISIÓN</button>
+      <button onClick={() => setStep(0)} className="px-12 py-6 btn-navigation rounded-2xl text-xl font-space shadow-2xl">INICIAR REGISTRO DE MISIÓN <ArrowRight className="inline ml-3" /></button>
     </div>
   );
 
   const renderStep1 = () => (
-    <StepLayout phase="IDENTIFICACIÓN" title="Datos del Tripulante" description="Información básica para tu reporte de re-incubación" next={nextStep} current={1}>
+    <StepLayout phase="ID" title="Tu Identidad" description="Datos básicos del tripulante" next={nextStep} current={1}>
       <div className="space-y-6">
-        <InputGroup label="Nombre completo *"><input className="input-vibrant w-full" type="text" value={formData.nombre} onChange={e => updateField('nombre', e.target.value)} placeholder="Tu nombre..." /></InputGroup>
-        <InputGroup label="Email *"><input className="input-vibrant w-full" type="email" value={formData.email} onChange={e => updateField('email', e.target.value)} placeholder="Tu email..." /></InputGroup>
-        <InputGroup label="Rol/Posición actual *"><input className="input-vibrant w-full" type="text" value={formData.rol} onChange={e => updateField('rol', e.target.value)} placeholder="¿A qué te dedicas?" /></InputGroup>
-        <InputGroup label="Años en el rol actual"><input className="input-vibrant w-full" type="text" value={formData.años} onChange={e => updateField('años', e.target.value)} placeholder="¿Cuánto tiempo?" /></InputGroup>
+        <InputGroup label="Nombre *"><input className="input-vibrant w-full" value={formData.nombre} onChange={e => updateField('nombre', e.target.value)} placeholder="Tu nombre..." /></InputGroup>
+        <InputGroup label="Email *"><input className="input-vibrant w-full" value={formData.email} onChange={e => updateField('email', e.target.value)} placeholder="Tu email..." /></InputGroup>
+        <InputGroup label="Rol actual *"><input className="input-vibrant w-full" value={formData.rol} onChange={e => updateField('rol', e.target.value)} placeholder="¿Qué haces hoy?" /></InputGroup>
       </div>
     </StepLayout>
   );
 
   const renderStep2 = () => (
-    <StepLayout phase="TURBULENCIAS" title="Análisis de Bloqueos" description="Identificando lo que drena tu energía" prev={prevStep} next={nextStep} current={2}>
+    <StepLayout phase="DOLOR" title="Bloqueos" description="¿Qué drena tu energía?" prev={prevStep} next={nextStep} current={2}>
       <div className="space-y-8">
-        <InputGroup label="Tus 'Crashes': ¿Cuándo sentiste que no podías más?"><textarea className="input-vibrant w-full min-h-[120px]" value={formData.crashes} onChange={e => updateField('crashes', e.target.value)} placeholder="Crisis o burnout..." /></InputGroup>
-        <InputGroup label="Inercias: ¿Qué tareas haces de forma automática pero te drenan?"><textarea className="input-vibrant w-full min-h-[120px]" value={formData.procesos_colgados} onChange={e => updateField('procesos_colgados', e.target.value)} placeholder="Tareas que haces sin alma..." /></InputGroup>
-        <InputGroup label="Sombras: ¿Qué voces o creencias limitan tu vuelo?"><textarea className="input-vibrant w-full min-h-[120px]" value={formData.malware} onChange={e => updateField('malware', e.target.value)} placeholder="Limitaciones internas..." /></InputGroup>
+        <InputGroup label="Crashes (Momentos críticos)"><textarea className="input-vibrant w-full min-h-[100px]" value={formData.crashes} onChange={e => updateField('crashes', e.target.value)} /></InputGroup>
+        <InputGroup label="Sombras (Creencias)"><textarea className="input-vibrant w-full min-h-[100px]" value={formData.malware} onChange={e => updateField('malware', e.target.value)} /></InputGroup>
       </div>
     </StepLayout>
   );
 
   const renderStep3 = () => (
-    <StepLayout phase="PROPULSIÓN" title="Capacidades Nativas" description="Tu combustible humano y talentos nativos" prev={prevStep} next={nextStep} current={3}>
+    <StepLayout phase="FUEGO" title="Talentos" description="Tu combustible interno" prev={prevStep} next={nextStep} current={3}>
       <div className="space-y-8">
-        <InputGroup label="Tus Hitos: ¿De qué estás realmente orgulloso/a?"><textarea className="input-vibrant w-full min-h-[100px]" value={formData.logros} onChange={e => updateField('logros', e.target.value)} placeholder="Momentos de impacto..." /></InputGroup>
-        <InputGroup label="Estado de Flujo: ¿Cuándo pierdes la noción del tiempo?"><textarea className="input-vibrant w-full min-h-[100px]" value={formData.disfrute} onChange={e => updateField('disfrute', e.target.value)} placeholder="En qué tareas te sientes vivo/a..." /></InputGroup>
-        <InputGroup label="Tu Don: ¿Qué haces sin esfuerzo aparente?"><textarea className="input-vibrant w-full min-h-[100px]" value={formData.talentos_naturales} onChange={e => updateField('talentos_naturales', e.target.value)} placeholder="Habilidad innata..." /></InputGroup>
+        <InputGroup label="Tus Hitos (Orgullo)"><textarea className="input-vibrant w-full min-h-[100px]" value={formData.logros} onChange={e => updateField('logros', e.target.value)} /></InputGroup>
+        <InputGroup label="Tu Don (Facilidad)"><textarea className="input-vibrant w-full min-h-[100px]" value={formData.talentos_naturales} onChange={e => updateField('talentos_naturales', e.target.value)} /></InputGroup>
       </div>
     </StepLayout>
   );
 
   const renderStep4 = () => (
-    <StepLayout phase="NÚCLEO" title="Brújula de Valores" description="Tus valores son el centro de gravedad" prev={prevStep} next={nextStep} current={4}>
-      <div className="space-y-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <StepLayout phase="CORE" title="Valores" description="Tu centro de gravedad" prev={prevStep} next={nextStep} current={4}>
+      <div className="space-y-8">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
           {VALUES_OPTIONS.map(val => (
-            <button key={val.id} type="button" onClick={() => handleValueToggle(val.id)} className={`flex items-center gap-4 p-4 text-left rounded-xl transition-all border ${formData.valores.includes(val.id) ? 'border-orange-400 bg-orange-400/10' : 'border-white/10 bg-slate-900/40 hover:border-white/20'}`}>
-              <div className={`w-5 h-5 rounded-sm border flex items-center justify-center transition-colors ${formData.valores.includes(val.id) ? 'bg-white border-white' : 'border-slate-500'}`}>{formData.valores.includes(val.id) && <Check className="w-4 h-4 text-indigo-900" />}</div>
-              <span className="text-xl">{val.icon}</span>
-              <span className="font-medium text-white text-sm">{val.label}</span>
+            <button key={val.id} type="button" onClick={() => handleValueToggle(val.id)} className={`p-3 text-sm rounded-xl border transition-all ${formData.valores.includes(val.id) ? 'border-orange-400 bg-orange-400/10' : 'border-white/10 bg-slate-900/40'}`}>
+              {val.icon} {val.label}
             </button>
           ))}
         </div>
-        <InputGroup label="Si tuvieras que elegir SOLO 3 de los anteriores, ¿cuáles y por qué? *">
-          <textarea className="input-vibrant w-full min-h-[120px]" value={formData.valores_top3} onChange={e => updateField('valores_top3', e.target.value)} placeholder="Escribe los 3 valores más importantes..." />
-        </InputGroup>
+        <InputGroup label="Explica tus 3 más importantes *"><textarea className="input-vibrant w-full min-h-[100px]" value={formData.valores_top3} onChange={e => updateField('valores_top3', e.target.value)} /></InputGroup>
       </div>
     </StepLayout>
   );
 
   const renderStep5 = () => (
-    <StepLayout phase="EL HORIZONTE" title="Destino Profesional" description="Visualizando tu nueva historia re-incubada" prev={prevStep} next={nextStep} current={5}>
+    <StepLayout phase="VISIÓN" title="Horizonte" description="¿Hacia dónde vamos?" prev={prevStep} next={nextStep} current={5}>
       <div className="space-y-8">
-        <InputGroup label="El Trigger: ¿Qué te ha hecho decir 'basta' ahora?"><textarea className="input-vibrant w-full min-h-[100px]" value={formData.trigger} onChange={e => updateField('trigger', e.target.value)} placeholder="Chispa de cambio..." /></InputGroup>
-        <InputGroup label="Visión 2.0: ¿Dónde estarás en 2 años?"><textarea className="input-vibrant w-full min-h-[100px]" value={formData.vision_2años} onChange={e => updateField('vision_2años', e.target.value)} placeholder="Tu futuro ideal..." /></InputGroup>
-        <InputGroup label="El Miedo: ¿Qué es lo que más te asusta de este salto?"><textarea className="input-vibrant w-full min-h-[100px]" value={formData.miedo_mayor} onChange={e => updateField('miedo_mayor', e.target.value)} placeholder="Tus miedos..." /></InputGroup>
+        <InputGroup label="¿Qué te hizo decir BASTA?"><textarea className="input-vibrant w-full min-h-[100px]" value={formData.trigger} onChange={e => updateField('trigger', e.target.value)} /></InputGroup>
+        <InputGroup label="Tu visión en 2 años"><textarea className="input-vibrant w-full min-h-[100px]" value={formData.vision_2años} onChange={e => updateField('vision_2años', e.target.value)} /></InputGroup>
       </div>
     </StepLayout>
   );
 
   const renderStep6 = () => (
-    <StepLayout phase="AJUSTES" title="Calibración Final" description="Para asegurarme de que puedo ayudarte de la mejor manera" prev={prevStep} next={handleSubmit} nextLabel="LANZAR MISIÓN 🚀" current={6}>
-      <div className="space-y-10">
-        <InputGroup label="¿Tienes claridad sobre QUÉ quieres hacer? *">
-          <div className="space-y-3">
-            {CLARITY_OPTIONS.map(opt => (
-              <div key={opt.id} onClick={() => updateField('claridad_que', opt.id)} className={`custom-radio ${formData.claridad_que === opt.id ? 'selected' : ''}`}>
-                <div className="radio-circle"><div className="radio-dot"></div></div>
-                <span className="text-sm text-white font-medium">{opt.label}</span>
-              </div>
-            ))}
-          </div>
-        </InputGroup>
-
-        <InputGroup label="¿Estás buscando principalmente...? *">
-          <div className="space-y-3">
+    <StepLayout phase="FINAL" title="Calibración" description="Últimos ajustes" prev={prevStep} next={handleSubmit} nextLabel="GENERAR BRIEFING 🚀" current={6}>
+      <div className="space-y-8">
+        <InputGroup label="¿Qué buscas principalmente?">
+          <div className="space-y-2">
             {SEEKING_OPTIONS.map(opt => (
               <div key={opt.id} onClick={() => updateField('busca_principal', opt.id)} className={`custom-radio ${formData.busca_principal === opt.id ? 'selected' : ''}`}>
                 <div className="radio-circle"><div className="radio-dot"></div></div>
-                <span className="text-sm text-white font-medium">{opt.label}</span>
+                <span className="text-sm text-white">{opt.label}</span>
               </div>
             ))}
           </div>
         </InputGroup>
-
-        <InputGroup label="¿Cómo describirías tu estado emocional actual? *">
-          <div className="space-y-3">
-            {EMOTIONAL_OPTIONS.map(opt => (
-              <div key={opt.id} onClick={() => updateField('estado_emocional', opt.id)} className={`custom-radio ${formData.estado_emocional === opt.id ? 'selected' : ''}`}>
-                <div className="radio-circle"><div className="radio-dot"></div></div>
-                <span className="text-sm text-white font-medium">{opt.label}</span>
-              </div>
-            ))}
-          </div>
-        </InputGroup>
-
-        <InputGroup label="¿Has trabajado antes con un coach, terapeuta o mentor? *">
-          <textarea className="input-vibrant w-full min-h-[100px]" value={formData.experiencia_previa} onChange={e => updateField('experiencia_previa', e.target.value)} placeholder="Experiencia previa..." />
-        </InputGroup>
-
-        <InputGroup label="¿Qué esperas que pase después de nuestra sesión? *">
-          <textarea className="input-vibrant w-full min-h-[100px]" value={formData.expectativa_sesion} onChange={e => updateField('expectativa_sesion', e.target.value)} placeholder="Tu objetivo prioritario..." />
-        </InputGroup>
+        <InputGroup label="Expectativa de la sesión"><textarea className="input-vibrant w-full min-h-[100px]" value={formData.expectativa_sesion} onChange={e => updateField('expectativa_sesion', e.target.value)} /></InputGroup>
       </div>
     </StepLayout>
   );
 
   const renderResult = () => (
     <div className="max-w-4xl mx-auto py-12 px-6">
-      <div className="glass-vibrant p-10 rounded-[3rem] relative overflow-hidden">
+      <div className="glass-vibrant p-10 rounded-[3rem] animate-in fade-in zoom-in duration-700">
         {isAnalyzing ? (
-          <div className="flex flex-col items-center justify-center py-24 text-center">
+          <div className="flex flex-col items-center justify-center py-24">
             <Loader2 className="w-20 h-20 text-indigo-400 animate-spin mb-8" />
-            <h2 className="text-3xl font-space text-white mb-2 text-glow">PROCESANDO DATOS...</h2>
-            <p className="text-slate-400">Cruzando tus respuestas con la matriz Human-OS.</p>
+            <h2 className="text-3xl font-space text-white">ANALIZANDO TU SISTEMA...</h2>
           </div>
         ) : (
-          <div className="space-y-12 animate-in fade-in duration-1000">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 border-b border-white/10 pb-10">
-              <div>
-                <h2 className="text-4xl font-bold text-white mb-2 font-space text-glow">Mission Briefing</h2>
-                <p className="text-indigo-300">Tripulante: <span className="font-semibold text-white">{formData.nombre}</span></p>
-              </div>
-              <div className="flex flex-col items-center justify-center p-6 rounded-[2rem] bg-indigo-500/10 border border-indigo-500/30 min-w-[140px]">
-                <span className="text-[10px] text-slate-500 font-space tracking-widest uppercase mb-1">Human-OS Match</span>
-                <span className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-br from-indigo-400 to-pink-400">{result?.fitScore}%</span>
+          <div className="space-y-12">
+            <div className="flex justify-between items-center border-b border-white/10 pb-8">
+              <h2 className="text-4xl font-bold font-space text-white">Mission Briefing</h2>
+              <div className="bg-indigo-500/20 p-4 rounded-2xl text-center">
+                <div className="text-[10px] text-slate-400 uppercase tracking-widest">Match Score</div>
+                <div className="text-4xl font-bold text-indigo-400">{result?.fitScore}%</div>
               </div>
             </div>
-
-            <div className="space-y-10">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="p-6 rounded-2xl bg-emerald-500/10 border border-emerald-500/20">
-                  <h4 className="text-emerald-400 font-bold mb-3 flex items-center gap-2 uppercase text-xs tracking-widest">
-                    <Sparkles className="w-4 h-4" /> Fortalezas
-                  </h4>
-                  <ul className="space-y-2">
-                    {result?.strengths.map((s, i) => (<li key={i} className="text-sm text-slate-300 flex gap-2"><span className="text-emerald-500">•</span> {s}</li>))}
-                  </ul>
-                </div>
-                <div className="p-6 rounded-2xl bg-red-500/10 border border-red-500/20">
-                  <h4 className="text-red-400 font-bold mb-3 flex items-center gap-2 uppercase text-xs tracking-widest">
-                    <AlertTriangle className="w-4 h-4" /> Debilidades
-                  </h4>
-                  <ul className="space-y-2">
-                    {result?.weaknesses.map((w, i) => (<li key={i} className="text-sm text-slate-300 flex gap-2"><span className="text-red-500">•</span> {w}</li>))}
-                  </ul>
-                </div>
-                <div className="p-6 rounded-2xl bg-amber-500/10 border border-amber-500/20">
-                  <h4 className="text-amber-400 font-bold mb-3 flex items-center gap-2 uppercase text-xs tracking-widest">
-                    <Lightbulb className="w-4 h-4" /> Oportunidades
-                  </h4>
-                  <ul className="space-y-2">
-                    {result?.opportunities.map((o, i) => (<li key={i} className="text-sm text-slate-300 flex gap-2"><span className="text-amber-500">•</span> {o}</li>))}
-                  </ul>
-                </div>
-                <div className="p-6 rounded-2xl bg-violet-500/10 border border-violet-500/20">
-                  <h4 className="text-violet-400 font-bold mb-3 flex items-center gap-2 uppercase text-xs tracking-widest">
-                    <ShieldAlert className="w-4 h-4" /> Amenazas
-                  </h4>
-                  <ul className="space-y-2">
-                    {result?.threats.map((t, i) => (<li key={i} className="text-sm text-slate-300 flex gap-2"><span className="text-violet-500">•</span> {t}</li>))}
-                  </ul>
-                </div>
-              </div>
-
-              <section className="bg-indigo-500/5 p-8 rounded-3xl border border-indigo-500/20">
-                <h3 className="text-indigo-300 mb-6 font-space uppercase tracking-widest text-sm font-bold flex items-center gap-2">
-                  <Compass className="w-5 h-5" /> Tu Hoja de Ruta Sugerida
-                </h3>
-                <div className="space-y-4">
-                  {result?.recommendations.map((r, i) => (
-                    <div key={i} className="flex gap-4 items-start bg-slate-900/40 p-4 rounded-xl border border-white/5">
-                      <div className="w-6 h-6 rounded-full bg-indigo-500 text-white text-xs flex items-center justify-center shrink-0 font-bold">{i + 1}</div>
-                      <p className="text-sm text-slate-200">{r}</p>
-                    </div>
-                  ))}
-                </div>
-              </section>
+            <section className="bg-white/5 p-6 rounded-2xl italic text-slate-200">"{result?.summary}"</section>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <ResultBox title="Fortalezas" color="text-emerald-400" icon={<Sparkles className="w-4 h-4"/>} items={result?.strengths} />
+              <ResultBox title="Debilidades" color="text-red-400" icon={<AlertTriangle className="w-4 h-4"/>} items={result?.weaknesses} />
+              <ResultBox title="Oportunidades" color="text-amber-400" icon={<Lightbulb className="w-4 h-4"/>} items={result?.opportunities} />
+              <ResultBox title="Amenazas" color="text-violet-400" icon={<ShieldAlert className="w-4 h-4"/>} items={result?.threats} />
             </div>
-
-            <div className="flex flex-col md:flex-row gap-4 pt-10 border-t border-white/10">
-              <button onClick={generatePDFReport} className="flex-1 py-6 flex items-center justify-center gap-3 btn-navigation rounded-2xl shadow-2xl text-lg">
-                <Download className="w-6 h-6" /> DESCARGAR DOSSIER COMPLETO (PDF)
+            <div className="flex gap-4 pt-8">
+              <button onClick={generatePDFReport} className="flex-1 py-6 flex items-center justify-center gap-3 btn-navigation rounded-2xl text-lg font-bold">
+                <Download /> DESCARGAR PDF
               </button>
-              <button onClick={() => setStep(-1)} className="px-10 py-6 flex items-center justify-center gap-3 bg-white/5 text-white font-bold rounded-2xl hover:bg-white/10 transition-all">
-                <RotateCcw className="w-6 h-6" /> REINICIAR
+              <button onClick={() => setStep(-1)} className="px-8 py-6 bg-white/5 text-white font-bold rounded-2xl hover:bg-white/10 transition-all">
+                REINICIAR
               </button>
             </div>
           </div>
@@ -496,68 +354,51 @@ const App: React.FC = () => {
   return (
     <div className="min-h-screen text-slate-100">
       {step === -1 && renderLanding()}
-      {step === 0 && renderDiagnosticStart()}
-      {step >= 1 && step <= 6 && (
-        <>
-          {step === 1 && renderStep1()}
-          {step === 2 && renderStep2()}
-          {step === 3 && renderStep3()}
-          {step === 4 && renderStep4()}
-          {step === 5 && renderStep5()}
-          {step === 6 && renderStep6()}
-        </>
-      )}
+      {step === 0 && <div className="flex items-center justify-center min-h-screen"><button onClick={nextStep} className="btn-navigation px-12 py-6 rounded-2xl">CONTINUAR</button></div>}
+      {step === 1 && renderStep1()}
+      {step === 2 && renderStep2()}
+      {step === 3 && renderStep3()}
+      {step === 4 && renderStep4()}
+      {step === 5 && renderStep5()}
+      {step === 6 && renderStep6()}
       {step === 8 && renderResult()}
     </div>
   );
 };
 
-interface StepLayoutProps {
-  phase: string;
-  title: string;
-  description: string;
-  children: React.ReactNode;
-  prev?: () => void;
-  next?: (e: React.FormEvent) => void;
-  nextLabel?: string;
-  current: number;
-}
+const ResultBox = ({ title, color, icon, items }: any) => (
+  <div className="p-6 rounded-2xl bg-white/5 border border-white/10">
+    <h4 className={`font-bold mb-4 flex items-center gap-2 uppercase text-xs tracking-widest ${color}`}>{icon} {title}</h4>
+    <ul className="space-y-2">
+      {items?.map((it: string, i: number) => <li key={i} className="text-sm text-slate-400 flex gap-2"><span>•</span> {it}</li>)}
+    </ul>
+  </div>
+);
 
-const StepLayout: React.FC<StepLayoutProps> = ({ phase, title, description, children, prev, next, nextLabel, current }) => {
-  return (
-    <div className="max-w-3xl mx-auto py-12 px-6 animate-in fade-in slide-in-from-bottom-12 duration-700">
-      <div className="flex flex-col items-center mb-8">
-        <SpaceshipProgress step={current} />
-        <div className="flex justify-between items-center w-full mb-4">
-          <span className="phase-text">FASE 0{current} // {phase}</span>
-          <div className="step-counter">{current} de 6</div>
-        </div>
-        <h1 className="text-4xl md:text-5xl font-bold font-space text-white text-center mb-2 tracking-tight text-glow">{title}</h1>
-        <p className="text-slate-400 font-light text-center text-lg">{description}</p>
+const StepLayout = ({ phase, title, description, children, prev, next, nextLabel, current }: any) => (
+  <div className="max-w-3xl mx-auto py-12 px-6 animate-in slide-in-from-bottom-8 duration-500">
+    <div className="flex flex-col items-center mb-8">
+      <SpaceshipProgress step={current} />
+      <div className="flex justify-between items-center w-full mb-2">
+        <span className="phase-text">{phase}</span>
+        <div className="step-counter">{current}/6</div>
       </div>
-
-      <div className="glass-vibrant p-10 rounded-[2.5rem] border-sky-400/30 shadow-2xl">
-        <form onSubmit={e => { e.preventDefault(); next && next(e); }}>
-          {children}
-          <div className="mt-12 pt-10 border-t border-white/5 flex items-center justify-end gap-6">
-            {prev && (
-              <button type="button" onClick={prev} className="flex items-center gap-2 px-6 py-3 text-slate-400 hover:text-white transition-all font-space text-sm tracking-widest uppercase">
-                <ArrowLeft className="w-4 h-4" /> VOLVER
-              </button>
-            )}
-            <button type="submit" className="px-10 py-4 btn-navigation rounded-2xl group text-lg flex items-center gap-3 shadow-xl uppercase font-space tracking-widest">
-              {nextLabel || 'SIGUIENTE'} <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
-            </button>
-          </div>
-        </form>
+      <h1 className="text-4xl font-bold font-space text-white mb-2">{title}</h1>
+      <p className="text-slate-400 text-center">{description}</p>
+    </div>
+    <div className="glass-vibrant p-10 rounded-[2.5rem]">
+      {children}
+      <div className="mt-12 flex items-center justify-end gap-6 border-t border-white/5 pt-8">
+        {prev && <button onClick={prev} className="text-slate-400 uppercase text-xs font-bold hover:text-white">Atrás</button>}
+        <button onClick={next} className="px-10 py-4 btn-navigation rounded-xl font-bold uppercase tracking-widest">{nextLabel || 'Siguiente'}</button>
       </div>
     </div>
-  );
-};
+  </div>
+);
 
-const InputGroup: React.FC<{ label: string; children: React.ReactNode }> = ({ label, children }) => (
-  <div className="space-y-4">
-    <label className="block text-sm font-space font-bold text-sky-400 uppercase tracking-widest">{label}</label>
+const InputGroup = ({ label, children }: any) => (
+  <div className="space-y-3">
+    <label className="block text-xs font-space font-bold text-sky-400 uppercase tracking-widest">{label}</label>
     {children}
   </div>
 );
