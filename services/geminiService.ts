@@ -2,31 +2,35 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { DiagnosticFormData, AnalysisResult } from "../types";
 
-export async function analyzeDiagnostic(data: DiagnosticFormData): Promise<AnalysisResult> {
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
-  
-  const prompt = `
-    Analiza los siguientes datos de un tripulante para el programa "HUMAN-OS" (re-incubación profesional).
-    El objetivo es preparar un "Mission Briefing" para el usuario que incluya un diagnóstico tipo DAFO (Debilidades, Amenazas, Fortalezas, Oportunidades).
-    
-    Datos del Tripulante:
-    - Nombre: ${data.nombre}
-    - Rol Actual: ${data.rol} (${data.años} años)
-    - Puntos de Dolor: Crashes: ${data.crashes}, Procesos colgados: ${data.procesos_colgados}, Malware (creencias): ${data.malware}
-    - Potencial: Logros: ${data.logros}, Disfrute: ${data.disfrute}, Talentos: ${data.talentos_naturales}
-    - Valores: ${data.valores.join(', ')} (Explicación: ${data.valores_top3})
-    - Motivación: Disparador: ${data.trigger}, Visión 2 años: ${data.vision_2años}, Miedo mayor: ${data.miedo_mayor}
-    - Estado Actual: Emocional: ${data.estado_emocional}, Objetivo: ${data.busca_principal}, Claridad: ${data.claridad_que}
+const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
 
-    Genera una respuesta en JSON con:
-    1. 'fitScore': Un porcentaje (1-100) de afinidad con la filosofía Human-OS (alta afinidad si busca un cambio profundo y tiene autoconciencia).
-    2. 'fitType': Una etiqueta de perfil (ej. "EXPLORADOR_ESTELAR", "INGENIERO_EN_PAUSA", "PILOTO_BLOQUEADO").
-    3. 'summary': Un diagnóstico narrativo de su "Sistema Operativo" actual (máximo 3 frases).
-    4. 'strengths': 3-4 fortalezas clave basadas en sus talentos y logros.
-    5. 'weaknesses': 3-4 debilidades internas o bloqueos (basado en crashes/malware).
-    6. 'opportunities': 3-4 oportunidades externas o de crecimiento basadas en su visión y el mercado.
-    7. 'threats': 3-4 amenazas o miedos que podrían sabotear su proceso.
-    8. 'recommendations': Una ruta de 3-4 pasos a alto nivel para su re-incubación.
+export async function analyzeDiagnostic(data: DiagnosticFormData): Promise<AnalysisResult> {
+  const prompt = `
+    Eres el asistente personal del Capitán Fer en el programa "Human-OS". 
+    Tu objetivo es analizar el perfil de un nuevo tripulante y darle un feedback muy honesto, cercano, con un toque de humor simple y real.
+    Imagina que eres un colega experto que le dice las cosas como son, sin filtros corporativos pero con buena onda.
+
+    DATOS DEL TRIPULANTE:
+    - Nombre: ${data.nombre}
+    - Rol actual: ${data.rol}
+    - Años de experiencia: ${data.años}
+    - Lo que le quema (Crashes/Inercias/Sombras): ${data.crashes}, ${data.procesos_colgados}, ${data.malware}
+    - Lo que le mola (Logros/Flujo/Talento): ${data.logros}, ${data.disfrute}, ${data.talentos_naturales}
+    - Valores: ${data.valores.join(', ')} (Top 3: ${data.valores_top3})
+    - Visión futura: ${data.vision_2años}
+    - Miedos: ${data.miedo_mayor}
+    - Estado emocional: ${data.estado_emocional}
+
+    TU TAREA:
+    Genera un JSON con:
+    1. 'fitScore': Porcentaje (1-100) de ganas reales de cambio.
+    2. 'fitType': Un nombre de perfil divertido y real (ej: "Zombi con ganas de mambo", "Talentazo en pausa dramática", "Cerebro frito buscando aire").
+    3. 'summary': Un párrafo honesto, directo y divertido sobre su situación actual. Habla de tú a tú. Si está hasta las narices, reconócelo. Si tiene potencial pero está dormido, dale un toque. Usa alguna metáfora de "misión" pero muy casual.
+    4. 'strengths': 3 cosas en las que es un crack absoluto según lo que ha contado.
+    5. 'weaknesses': 3 cosas que le están robando la energía (sé honesto, incluso un poco irónico).
+    6. 'opportunities': 3 vías de escape o mejora que tengan sentido para él/ella.
+    7. 'threats': 3 cosas que harán que se quede atrapado en su silla para siempre si no hace nada.
+    8. 'recommendations': 4 pasos de acción "reales y directos" para su re-incubación.
   `;
 
   try {
@@ -57,14 +61,14 @@ export async function analyzeDiagnostic(data: DiagnosticFormData): Promise<Analy
   } catch (error) {
     console.error("Gemini Analysis Error:", error);
     return {
-      fitScore: 75,
-      fitType: "PERFIL_POTENCIAL",
-      summary: "Diagnóstico automático: Se detecta una arquitectura sólida con procesos de fondo que consumen recursos excesivos. El sistema requiere una re-configuración de prioridades.",
-      strengths: ["Gran capacidad de análisis propio", "Trayectoria con hitos verificables", "Alineación de valores clara"],
-      weaknesses: ["Sobrecarga de procesos (burnout)", "Creencias limitantes sobre el cambio", "Falta de claridad en el 'cómo'"],
-      opportunities: ["Re-branding profesional", "Uso de IA para optimizar procesos", "Nuevos mercados alineados a valores"],
-      threats: ["Miedo al fracaso financiero", "Inercia del rol actual", "Entorno poco estimulante"],
-      recommendations: ["Auditoría de tareas diarias", "Mapeo de talentos infrautilizados", "Sesión de claridad estratégica"]
+      fitScore: 85,
+      fitType: "TRIPULANTE CON GANAS",
+      summary: "Mira, el sistema se ha quedado un poco pillado con tanta info, pero lo que está claro es que si has llegado hasta aquí es porque tu cuerpo pide un cambio a gritos. ¡Vamos a ello!",
+      strengths: ["Ganas de cambio", "Honestidad brutal", "Potencial oculto"],
+      weaknesses: ["Dudas lógicas", "El 'mañana lo miro'", "Inercias pesadas"],
+      opportunities: ["Sesión con Fer", "Resetear prioridades", "Nuevos horizontes"],
+      threats: ["Zona de confort magnética", "Miedo al vacío", "El qué dirán"],
+      recommendations: ["Respira", "Bájate el PDF", "Mándaselo al Capitán", "Reserva tu sitio"]
     };
   }
 }
