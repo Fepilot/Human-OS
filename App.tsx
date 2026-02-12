@@ -22,7 +22,11 @@ import {
   Zap,
   ShieldAlert,
   BrainCircuit,
-  Globe
+  Globe,
+  Music,
+  Binary,
+  Target,
+  FileText
 } from 'lucide-react';
 import { jsPDF } from 'jspdf';
 
@@ -31,7 +35,8 @@ const TABS = [
   { id: 'insights', label: 'Insights', icon: <Lightbulb className="w-4 h-4" /> },
   { id: 'experimento', label: 'Experimento', icon: <Sparkles className="w-4 h-4" /> },
   { id: 'recursos', label: 'Recursos', icon: <BookOpen className="w-4 h-4" /> },
-  { id: 'proximos', label: 'Misiones', icon: <Compass className="w-4 h-4" /> },
+  { id: 'plan', label: 'Plan 3 Meses', icon: <Target className="w-4 h-4" /> },
+  { id: 'misiones', label: 'Misiones', icon: <Compass className="w-4 h-4" /> },
   { id: 'reservar', label: 'Reservar', icon: <Calendar className="w-4 h-4" /> },
 ];
 
@@ -39,32 +44,32 @@ const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState('resumen');
   const [showCopySuccess, setShowCopySuccess] = useState(false);
   const [responses, setResponses] = useState({
-    s1q1: '', s1q2: '', s1q3: '',
-    s2q1: '', s2q2: '', s2q3: '',
-    s3q1: '', s3q2: '', s3q3: '',
+    v1q1: '', v1q2: '', v1q3: '',
+    v2q1: '', v2q2: '', v2q3: '',
+    v3q1: '', v3q2: '', v3q3: '',
     reflex1: '', reflex2: '', reflex3: ''
   });
 
   useEffect(() => {
-    const saved = localStorage.getItem('fernanda_guide_responses');
+    const saved = localStorage.getItem('sergio_guide_responses');
     if (saved) setResponses(JSON.parse(saved));
   }, []);
 
   const handleInputChange = (id: string, value: string) => {
     const newResponses = { ...responses, [id]: value };
     setResponses(newResponses);
-    localStorage.setItem('fernanda_guide_responses', JSON.stringify(newResponses));
+    localStorage.setItem('sergio_guide_responses', JSON.stringify(newResponses));
   };
 
   const copyPrompt = () => {
     const prompt = `Analiza las siguientes respuestas de mi ejercicio de reflexión profesional:
     
-    ESCENARIO 1 (México): ${responses.s1q1} | ${responses.s1q2} | ${responses.s1q3}
-    ESCENARIO 2 (Madrid): ${responses.s2q1} | ${responses.s2q2} | ${responses.s2q3}
-    ESCENARIO 3 (Híbrido): ${responses.s3q1} | ${responses.s3q2} | ${responses.s3q3}
+    ESCENARIO 1 (Marketing Analyst): ${responses.v1q1} | ${responses.v1q2} | ${responses.v1q3}
+    ESCENARIO 2 (Music Data): ${responses.v2q1} | ${responses.v2q2} | ${responses.v2q3}
+    ESCENARIO 3 (Híbrido): ${responses.v3q1} | ${responses.v3q2} | ${responses.v3q3}
     REFLEXIÓN: ${responses.reflex1} | ${responses.reflex2}
     
-    Identifica mis valores recurrentes, contradicciones y dame 3 pasos concretos.`;
+    Identifica valores recurrentes, contradicciones y dame 3 pasos concretos hacia mi carrera en Data Science.`;
     
     navigator.clipboard.writeText(prompt);
     setShowCopySuccess(true);
@@ -83,7 +88,7 @@ const App: React.FC = () => {
     doc.setFont('helvetica', 'bold');
     doc.text("HUMAN-OS // EXPERIMENTO", margin, 25);
     doc.setFontSize(10);
-    doc.text("TRIPULANTE: FERNANDA VILLANUEVA", margin, 35);
+    doc.text("TRIPULANTE: SERGIO MORO GONZÁLEZ", margin, 35);
     doc.text("FECHA: FEBRERO 2025", margin, 40);
 
     y = 65;
@@ -102,12 +107,12 @@ const App: React.FC = () => {
       y += (split.length * 5) + 8;
     };
 
-    addQA("Escenario México", `${responses.s1q1}\n${responses.s1q2}\n${responses.s1q3}`);
-    addQA("Escenario Madrid", `${responses.s2q1}\n${responses.s2q2}\n${responses.s2q3}`);
-    addQA("Escenario Híbrido", `${responses.s3q1}\n${responses.s3q2}\n${responses.s3q3}`);
-    addQA("Reflexión Final", `${responses.reflex1}\n${responses.reflex2}`);
+    addQA("Escenario Marketing", `${responses.v1q1}\n${responses.v1q2}\n${responses.v1q3}`);
+    addQA("Escenario Music Data", `${responses.v2q1}\n${responses.v2q2}\n${responses.v2q3}`);
+    addQA("Escenario Híbrido", `${responses.v3q1}\n${responses.v3q2}\n${responses.v3q3}`);
+    addQA("Reflexión Final", `${responses.reflex1}\n${responses.reflex2}\n${responses.reflex3}`);
 
-    doc.save("Experimento_Fernanda_HumanOS.pdf");
+    doc.save("Experimento_SergioMoro_HumanOS.pdf");
   };
 
   return (
@@ -120,7 +125,7 @@ const App: React.FC = () => {
           Human-OS
         </h1>
         <p className="font-space text-indigo-400 tracking-[0.3em] uppercase text-sm font-bold">
-          Guía de Re-incubación // Fernanda Villanueva
+          Guía de Re-incubación // Sergio Moro González
         </p>
       </div>
 
@@ -151,38 +156,38 @@ const App: React.FC = () => {
               <header className="border-b border-white/10 pb-8">
                 <h2 className="text-3xl font-space font-bold text-white mb-6 uppercase tracking-tight">Bitácora de Navegación</h2>
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                  <MetaItem icon={<User />} label="Perfil" value="Diseñadora / Founder" />
-                  <MetaItem icon={<Clock />} label="Timeline" value="Concept Studio (21)" />
-                  <MetaItem icon={<MapPin />} label="Ruta" value="México -> Madrid" />
-                  <MetaItem icon={<Briefcase />} label="Foco" value="Branding + IA" />
+                  <MetaItem icon={<User />} label="Perfil" value="Comercio + Marketing" />
+                  <MetaItem icon={<Binary />} label="Especialidad" value="Data Analysis" />
+                  <MetaItem icon={<MapPin />} label="Origen" value="Asturias, ES" />
+                  <MetaItem icon={<Music />} label="Pasión" value="Music Industry" />
                 </div>
               </header>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <SectionBlock title="Situación Actual" color="indigo">
                   <ul className="space-y-4 text-slate-300 text-sm">
-                    <li className="flex gap-3">🚀 <p>Especialista en branding, fundadora de estudio propio a los 21.</p></li>
-                    <li className="flex gap-3">🇪🇸 <p>Traslado a Madrid para Máster en IA + Marketing.</p></li>
-                    <li className="flex gap-3">⏰ <p>Vives en dos mundos: Clientes MX / Vida Madrid.</p></li>
-                    <li className="flex gap-3">💰 <p>Autofinanciada con ahorros (seguridad hasta julio 2025).</p></li>
+                    <li className="flex gap-3">🎓 <p>Estudiante de máster reorientando su carrera hacia los datos.</p></li>
+                    <li className="flex gap-3">🛠️ <p>CV y LinkedIn actualizados tras módulo especializado.</p></li>
+                    <li className="flex gap-3">🔍 <p>En fase de búsqueda de su primer rol profesional en el sector.</p></li>
+                    <li className="flex gap-3">📈 <p>Afinidad natural por las matemáticas y la estadística.</p></li>
                   </ul>
                 </SectionBlock>
 
                 <SectionBlock title="Fortalezas Confirmadas" color="emerald">
                   <ul className="space-y-4 text-slate-300 text-sm">
-                    <li className="flex gap-3">✨ <p>Extrovertida y helper natural (siempre para los demás).</p></li>
-                    <li className="flex gap-3">🧠 <p>Diseño técnico + Comprensión psicológica profunda.</p></li>
-                    <li className="flex gap-3">🎨 <p>Entiendes la emoción de la marca, no solo el logo.</p></li>
-                    <li className="flex gap-3">🔥 <p>Valentía probada: emprender a los 21 y mudarse a los 24.</p></li>
+                    <li className="flex gap-3">⚖️ <p><strong>Disciplinado:</strong> Capacidad de mantener constancia y estructura.</p></li>
+                    <li className="flex gap-3">🤝 <p><strong>Empático:</strong> Conexión genuina con las personas.</p></li>
+                    <li className="flex gap-3">💎 <p><strong>Sincero:</strong> Autenticidad total en las interacciones.</p></li>
+                    <li className="flex gap-3">🧘 <p><strong>Reflexivo:</strong> Pensamiento crítico y análisis profundo.</p></li>
                   </ul>
                 </SectionBlock>
 
                 <SectionBlock title="Puntos de Fricción" color="red">
                   <ul className="space-y-4 text-slate-300 text-sm">
-                    <li className="flex gap-3">🛑 <p>Sensación de "empezar de cero" tras el éxito en MX.</p></li>
-                    <li className="flex gap-3">🌫️ <p>Miedo disfrazado de "pereza" o zona de confort.</p></li>
-                    <li className="flex gap-3">⚠️ <p>Duda sobre tu nivel para el mercado europeo.</p></li>
-                    <li className="flex gap-3">🔋 <p>Agotamiento extremo por vivir en dos husos horarios.</p></li>
+                    <li className="flex gap-3">🛑 <p>Falta de experiencia práctica en el sector (inicio).</p></li>
+                    <li className="flex gap-3">🌀 <p>Sobre-reflexión que deriva en parálisis por análisis.</p></li>
+                    <li className="flex gap-3">❓ <p>Dudas sobre el nicho: ¿Marketing? ¿Música? ¿Ambos?</p></li>
+                    <li className="flex gap-3">🔋 <p>Incertidumbre del salto formación -> laboral.</p></li>
                   </ul>
                 </SectionBlock>
               </div>
@@ -196,33 +201,32 @@ const App: React.FC = () => {
               <div className="grid grid-cols-1 gap-6">
                 <InsightCard 
                   number="01" 
-                  title="No has retrocedido, has cambiado de pista" 
-                  content="Montar un estudio a los 21 que te paga un máster en Madrid NO es retroceder. Estás comparando tu sprint en México con tus primeros pasos en Madrid. Son carreras diferentes."
+                  title="Tu mezcla es un Unicornio" 
+                  content="Música + Datos + Marketing. La mayoría de los Data Scientists vienen de ingeniería pura. Tú vienes de marketing y te gusta la música. Empresas como Spotify, Apple Music o Universal necesitan gente que entienda el alma del negocio, no solo el código."
                   icon={<Zap className="w-5 h-5 text-indigo-400" />}
                 />
                 <InsightCard 
                   number="02" 
-                  title="Tienes un superpoder que no estás explotando" 
-                  content="Combinas diseño técnico + psicología humana + experiencia bicultural + interés por IA. Esto es oro. Muy pocas diseñadoras en Madrid tienen esa mezcla."
+                  title="Reflexiona con Deadline" 
+                  content="Tu pensamiento crítico es una ventaja competitiva brutal, pero hay una línea fina hacia la parálisis. Tu misión es aprender a 'reflexionar con cronómetro'. Si una decisión te toma más de X horas, estás perdiendo ejecución."
                   icon={<BrainCircuit className="w-5 h-5 text-indigo-400" />}
                 />
                 <InsightCard 
                   number="03" 
-                  title="El problema no es el esfuerzo, es la física" 
-                  content="Tratas de sostener un negocio mexicano mientras construyes una vida madrileña. Eso no es pereza, es física imposible. Necesitas elegir una dirección estratégica."
+                  title="No necesitas el título 'Final' ahora" 
+                  content="No tienes que empezar siendo Data Scientist. Roles de Analyst Junior, Marketing Ops o Business Intelligence son puertas de entrada perfectas. Una vez dentro del sistema, el crecimiento es orgánico."
                   icon={<ShieldAlert className="w-5 h-5 text-indigo-400" />}
                 />
                 <InsightCard 
                   number="04" 
-                  title="Madrid necesita lo que tú tienes" 
-                  content="No eres 'demasiado mexicana para Madrid'. Eres alguien que entiende dos mercados, dos culturas, dos formas de comunicar. Tú eres el puente, no la turista."
+                  title="Marca Personal en Beta" 
+                  content="Tu marca no es 'soy experto en datos'. Tu marca es: 'Soy alguien curioso que combina marketing y música, y estoy construyendo mi camino en los datos'. La vulnerabilidad del aprendizaje atrae mentores."
                   icon={<Globe className="w-5 h-5 text-indigo-400" />}
                 />
               </div>
               <div className="bg-white/5 p-12 rounded-[2.5rem] border border-white/10 italic text-xl text-slate-300 leading-relaxed text-center relative overflow-hidden group">
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 via-pink-500 to-indigo-500"></div>
-                "La pregunta no es: ¿estás haciendo suficiente?<br/><br/>
-                La pregunta real es: ¿Estás construyendo la Fernanda que quieres ser, o la Fernanda que crees que deberías ser?"
+                "No necesitas ser perfecto. Necesitas ser consistente."
               </div>
             </div>
           )}
@@ -232,8 +236,8 @@ const App: React.FC = () => {
             <div className="space-y-12">
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-white/10 pb-8">
                 <div>
-                  <h2 className="text-3xl font-space font-bold text-white uppercase tracking-tight">Feedback Experiment</h2>
-                  <p className="text-slate-400">30-45 mins para ganar claridad brutal</p>
+                  <h2 className="text-3xl font-space font-bold text-white uppercase tracking-tight">Experimento de Tri-ubicación</h2>
+                  <p className="text-slate-400">30-45 mins para decidir qué Sergio construir</p>
                 </div>
                 <div className="flex gap-3">
                   <button onClick={downloadPDF} className="flex items-center gap-2 px-4 py-2 bg-indigo-500/20 text-indigo-300 rounded-xl hover:bg-indigo-500/30 transition-all text-xs font-bold">
@@ -247,41 +251,41 @@ const App: React.FC = () => {
 
               <div className="grid grid-cols-1 gap-12">
                 <ScenarioBlock 
-                  title="Escenario 1: Fernanda Regreso a México" 
-                  desc="Imagina que decides regresar y continuar allí tu carrera."
+                  title="Versión 1: Sergio Data Analyst en Marketing" 
+                  desc="Especialización en análisis de datos aplicado al marketing digital y comportamiento de clientes."
                   questions={[
-                    { id: 's1q1', label: '¿Cómo sería tu vida profesional en 5 años?' },
-                    { id: 's1q2', label: '¿Qué estarías haciendo? ¿Con quién trabajarías?' },
-                    { id: 's1q3', label: '¿Cómo te sentirías con esa decisión?' }
+                    { id: 'v1q1', label: '¿Cómo sería un día típico de trabajo?' },
+                    { id: 'v1q2', label: '¿Qué tipo de problemas estarías resolviendo?' },
+                    { id: 'v1q3', label: '¿Te ves trabajando así 5 años? ¿Qué te emociona/preocupa?' }
                   ]}
                   values={responses}
                   onChange={handleInputChange}
                 />
                 <ScenarioBlock 
-                  title="Escenario 2: Fernanda Establecida en Madrid" 
-                  desc="Te quedas definitivamente y construyes tu carrera aquí."
+                  title="Versión 2: Sergio Data Analyst en Industria Musical" 
+                  desc="Trabajando en Spotify, sellos discográficos o startups de música analizando tendencias de streaming."
                   questions={[
-                    { id: 's2q1', label: '¿Cómo sería tu vida profesional en 5 años?' },
-                    { id: 's2q2', label: '¿Qué estarías haciendo? ¿Con quién trabajarías?' },
-                    { id: 's2q3', label: '¿Cómo te sentirías con esa decisión?' }
+                    { id: 'v2q1', label: '¿Cómo sería un día típico de trabajo?' },
+                    { id: 'v2q2', label: '¿Qué tipo de problemas estarías resolviendo?' },
+                    { id: 'v2q3', label: '¿Te ves trabajando así 5 años? ¿Qué te emociona/preocupa?' }
                   ]}
                   values={responses}
                   onChange={handleInputChange}
                 />
                 <ScenarioBlock 
-                  title="Escenario 3: Fernanda Bicultural" 
-                  desc="Combinas ambos mundos de forma híbrida y única."
+                  title="Versión 3: Sergio Híbrido (Datos + Marketing + Música)" 
+                  desc="Un camino propio donde el marketing es el trabajo base y la música el nicho o proyecto paralelo."
                   questions={[
-                    { id: 's3q1', label: '¿Cómo sería tu vida profesional en 5 años?' },
-                    { id: 's3q2', label: '¿Qué estarías haciendo? ¿Con quién trabajarías?' },
-                    { id: 's3q3', label: '¿Cómo te sentirías con esa decisión?' }
+                    { id: 'v3q1', label: '¿Cómo sería un día típico de trabajo?' },
+                    { id: 'v3q2', label: '¿Qué tipo de problemas estarías resolviendo?' },
+                    { id: 'v3q3', label: '¿Te ves trabajando así 5 años? ¿Qué te emociona/preocupa?' }
                   ]}
                   values={responses}
                   onChange={handleInputChange}
                 />
                 <ScenarioBlock 
                   title="Reflexión Final" 
-                  desc="Alineación de valores."
+                  desc="Alineación de valores y hallazgos."
                   questions={[
                     { id: 'reflex1', label: '¿Cuál de los tres escenarios te hace sentir más "TÚ"?' },
                     { id: 'reflex2', label: '¿Qué valores aparecen en el escenario ganador?' },
@@ -297,68 +301,55 @@ const App: React.FC = () => {
           {/* TAB: RECURSOS */}
           {activeTab === 'recursos' && (
             <div className="space-y-12">
-              <h2 className="text-3xl font-space font-bold text-white uppercase tracking-tight">Arsenal Tecnológico</h2>
+              <h2 className="text-3xl font-space font-bold text-white uppercase tracking-tight">Recursos Prometidos</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <ResourceCard 
-                  title="Test de Personalidad"
+                  title="Lecturas Recomendadas"
                   links={[
-                    { label: '16Personalities (Myers-Briggs)', url: 'https://www.16personalities.com/es' },
-                    { label: 'CrystalKnows (DISC para LinkedIn)', url: 'https://www.crystalknows.com/' }
+                    { label: 'Sapiens (Yuval Noah Harari)', url: 'https://www.amazon.es/Sapiens-Animales-dioses-breve-historia/dp/8483069681' },
+                    { label: 'El monje que vendió su Ferrari (Robin Sharma)', url: 'https://www.amazon.es/monje-que-vendio-su-Ferrari/dp/8499088219' }
                   ]}
                 />
                 <ResourceCard 
-                  title="IA & Diseño"
-                  items={['Gemini 3: Imagen para mockups', 'Midjourney: Exploración visual radical', 'Canva + ChatGPT: Flujos de trabajo']}
+                  title="Herramientas a Dominar"
+                  items={['Excel/Sheets (Nivel Pro)', 'Python (Pandas, NumPy)', 'SQL (Fundamental)', 'Power BI / Tableau']}
                 />
                 <ResourceCard 
-                  title="Optimización Digital"
-                  links={[
-                    { label: 'Taplio / Shield: LinkedIn Analytics', url: '#' },
-                    { label: 'Notion AI: Gestión de Proyectos', url: '#' }
-                  ]}
+                  title="IA & Empleo"
+                  items={['Carta de presentación honesta', 'Simulación de entrevistas técnicas', 'Análisis de keywords en ofertas']}
                 />
                 <ResourceCard 
-                  title="ChatGPT Mastery"
-                  desc="Configura tus 'Custom Instructions' y crea un 'Project' dedicado a tu búsqueda en Madrid."
+                  title="Estrategia LinkedIn"
+                  desc="Configura tu titular y el 'Acerca de' para que cuenten tu transición hacia Music Data Science."
                 />
               </div>
 
-              {/* CONFIGURACIÓN CHATGPT */}
+              {/* CONFIGURACIÓN LINKEDIN */}
               <div className="space-y-6 pt-10 border-t border-white/10">
-                <h3 className="text-2xl font-space font-bold text-white uppercase tracking-tight">Configuración de ChatGPT</h3>
+                <h3 className="text-2xl font-space font-bold text-white uppercase tracking-tight">Ejemplo de Marca Personal</h3>
                 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                   <div className="space-y-4">
-                    <h4 className="text-sm font-bold text-indigo-400 uppercase tracking-widest">Custom Instructions (Ejemplo Real)</h4>
-                    <div className="p-6 bg-slate-900/80 rounded-2xl border border-white/5 font-mono text-xs text-slate-400 leading-relaxed overflow-x-auto whitespace-pre">
-{`SOBRE MÍ:
-- Soy diseñadora gráfica especializada en branding
-- Fundé mi estudio (Concept Studio) a los 21
-- Vivo en Madrid, mis clientes están en México
-- Me interesa la psicología detrás de las marcas
-- Estoy aprendiendo sobre IA aplicada al diseño
-- Valoro: creatividad, autonomía, propósito
+                    <h4 className="text-sm font-bold text-indigo-400 uppercase tracking-widest">Sección "Acerca de"</h4>
+                    <div className="p-6 bg-slate-900/80 rounded-2xl border border-white/5 font-mono text-xs text-slate-400 leading-relaxed overflow-y-auto max-h-64 whitespace-pre-wrap">
+{`No siempre supe que quería trabajar con datos.
 
-CÓMO QUIERO QUE ME RESPONDAS:
-- Sé directo y práctico, sin rodeos corporativos
-- Usa ejemplos visuales cuando expliques conceptos
-- Si te pregunto algo de branding/diseño, asume conocimiento técnico
-- NUNCA te inventes datos o estadísticas
-- Dame máximo 3 opciones y explica pros/contras
-- Escribe en español de España`}
+Estudié comercio y marketing porque me gustaba entender cómo las marcas conectan con las personas. Pero había algo más: siempre me han fascinado los números.
+
+Cuando descubrí que podía combinar ambos mundos — marketing + datos — supe que ese era mi camino. Hoy estoy especializándome en análisis de datos, con un enfoque en marketing digital y comportamiento de clientes.
+
+Y tengo un interés particular: Music Data Science.
+
+Si hay algo que me apasiona tanto como los datos, es la música. ¿Predecir qué canción será la próxima viral? ¿Entender por qué ciertos géneros resuenan más? Ese es mi objetivo.
+
+Si trabajas en datos, marketing o industria musical, conectemos. Siempre dispuesto a aprender.`}
                     </div>
                   </div>
 
                   <div className="space-y-4">
-                    <h4 className="text-sm font-bold text-indigo-400 uppercase tracking-widest">Estrategia de Proyectos</h4>
-                    <div className="bg-white/5 p-6 rounded-2xl border border-white/10 h-full">
-                      <p className="text-slate-300 text-sm mb-4">Crea un proyecto específico para tu búsqueda de trabajo en Madrid:</p>
-                      <ul className="space-y-3 text-xs text-slate-400">
-                        <li className="flex gap-2"><span>1.</span> <p>Ve a ChatGPT → Projects → New Project.</p></li>
-                        <li className="flex gap-2"><span>2.</span> <p>Nómbralo: "Búsqueda de trabajo Madrid".</p></li>
-                        <li className="flex gap-2"><span>3.</span> <p>En Settings, sube tu CV y el análisis de Human-OS.</p></li>
-                        <li className="flex gap-2"><span>4.</span> <p>Cada vez que apliques a una oferta, hazlo dentro de este contexto.</p></li>
-                      </ul>
+                    <h4 className="text-sm font-bold text-indigo-400 uppercase tracking-widest">Titular Sugerido</h4>
+                    <div className="bg-white/5 p-6 rounded-2xl border border-white/10 h-full flex items-center justify-center italic text-slate-300">
+                      "Data Analyst en formación | Marketing + Música + Datos | Futuro Music Data Scientist"
                     </div>
                   </div>
                 </div>
@@ -366,31 +357,79 @@ CÓMO QUIERO QUE ME RESPONDAS:
             </div>
           )}
 
-          {/* TAB: PROXIMOS */}
-          {activeTab === 'proximos' && (
+          {/* TAB: PLAN */}
+          {activeTab === 'plan' && (
             <div className="space-y-12">
-              <h2 className="text-3xl font-space font-bold text-white uppercase tracking-tight">Misiones de Crecimiento</h2>
+              <h2 className="text-3xl font-space font-bold text-white uppercase tracking-tight">Plan de Acción (3 Meses)</h2>
+              <div className="grid grid-cols-1 gap-8">
+                <PlanMonth 
+                  month="MES 1" 
+                  title="Claridad + Marca Personal"
+                  tasks={[
+                    'Hacer el ejercicio de las 3 versiones de Sergio.',
+                    'Actualizar LinkedIn (Acerca de + Titular).',
+                    'Leer "Sapiens" (empezar perspectiva crítica).'
+                  ]}
+                  secondaryTasks={[
+                    'Publicar primer post contando tu historia.',
+                    'Conectar con 20 perfiles de data/marketing.',
+                    'Completar 1 curso corto de Python o SQL.'
+                  ]}
+                />
+                <PlanMonth 
+                  month="MES 2" 
+                  title="Práctica + Networking"
+                  tasks={[
+                    'Crear 1 proyecto pequeño de análisis (ej: Spotify data).',
+                    'Publicar el resultado/aprendizaje en LinkedIn.',
+                    'Enviar 10 mensajes pidiendo 15 min de feedback.'
+                  ]}
+                  secondaryTasks={[
+                    'Aplicar a 10 ofertas de prácticas o junior.',
+                    'Personalizar cada aplicación según el nicho.',
+                    'Simular entrevistas con IA.'
+                  ]}
+                />
+                <PlanMonth 
+                  month="MES 3" 
+                  title="Aceleración + Oportunidades"
+                  tasks={[
+                    'Objetivo: 5-10 aplicaciones de calidad por semana.',
+                    'Publicar 2 posts adicionales sobre tus avances.',
+                    'Asistir a 1 evento/meetup presencial de datos.'
+                  ]}
+                  secondaryTasks={[
+                    'Revisar progreso: ¿Qué ha funcionado?',
+                    'Ajustar estrategia según feedback de entrevistas.',
+                    'Celebrar pequeñas victorias de aprendizaje.'
+                  ]}
+                />
+              </div>
+            </div>
+          )}
+
+          {/* TAB: MISIONES */}
+          {activeTab === 'misiones' && (
+            <div className="space-y-12">
+              <h2 className="text-3xl font-space font-bold text-white uppercase tracking-tight">Misiones Disponibles</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <MissionCard 
-                  title="Misión Mantenimiento"
+                  title="Mentoría Mantenimiento"
                   price="60€"
                   period="sesión"
-                  desc="Sesión única de 1 hora para continuar con lo que hablamos y aportarte valor en tu proceso de toma de decisiones y búsqueda de oportunidades en Madrid."
-                  cta="Activar Misión"
+                  desc="Sesión única de 1 hora para revisar tu experimento, darte feedback sobre tu LinkedIn y ajustar tu plan de 3 meses según tus avances."
+                  cta="Elegir Misión"
                   onClick={() => setActiveTab('reservar')}
                 />
                 <MissionCard 
-                  title="Misión Re-incubación"
+                  title="Mentoría Mensual"
                   price="150€"
                   period="mes"
-                  desc="3 sesiones al mes (1h c/u). Acompañamiento continuo en tu transición. Incluye soporte por LinkedIn y revisión de experimentos."
-                  cta="Activar Misión"
+                  desc="3 sesiones mensuales (1h c/u). Acompañamiento continuo en tu transición. Incluye revisión de aplicaciones y soporte por LinkedIn."
+                  cta="Elegir Misión"
                   featured
                   onClick={() => setActiveTab('reservar')}
                 />
-              </div>
-              <div className="bg-indigo-500/5 p-10 rounded-[2.5rem] border border-indigo-500/20 text-center">
-                <p className="text-slate-300 italic">"No tienes que decidir nada ahora. Haz el experimento esta semana. Piénsalo. Y si en algún momento quieres continuar, me escribes."</p>
               </div>
             </div>
           )}
@@ -402,15 +441,14 @@ CÓMO QUIERO QUE ME RESPONDAS:
                 <div className="w-24 h-24 bg-indigo-500/10 rounded-full flex items-center justify-center mb-8">
                   <Calendar className="w-12 h-12 text-indigo-400" />
                 </div>
-                <h2 className="text-4xl font-space font-bold text-white mb-4 uppercase tracking-tighter">Próximo Salto</h2>
-                <p className="text-slate-400 max-w-lg mb-12 text-lg">Reserva tu sesión de seguimiento para revisar tu experimento y definir tu mapa en Madrid.</p>
+                <h2 className="text-4xl font-space font-bold text-white mb-4 uppercase tracking-tighter">Reservar Seguimiento</h2>
+                <p className="text-slate-400 max-w-lg mb-12 text-lg">Reserva tu sesión conmigo para revisar tu experimento y definir los próximos pasos de tu ruta en Data Science.</p>
                 
                 <a href="https://calendly.com/ferpilot-ia/meeting-with-fer?utm_source=schedule_from_linkedin&month=2026-02" target="_blank" rel="noreferrer" className="px-16 py-6 btn-navigation rounded-[2rem] text-xl uppercase tracking-widest flex items-center gap-4 transition-transform hover:scale-105">
-                  Reservar Sesión con Fer <ExternalLink className="w-6 h-6" />
+                  Reservar con Fer <ExternalLink className="w-6 h-6" />
                 </a>
               </div>
 
-              {/* BLOQUE CONTACTO ADICIONAL */}
               <div className="pt-16 border-t border-white/10">
                 <h3 className="text-2xl font-space font-bold text-white uppercase tracking-tight mb-8">Cómo seguimos en contacto</h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -419,23 +457,23 @@ CÓMO QUIERO QUE ME RESPONDAS:
                       <MessageSquare className="w-6 h-6 text-indigo-400" />
                     </div>
                     <h4 className="text-white font-bold">LinkedIn</h4>
-                    <p className="text-xs text-slate-500">Ya te sigo y activé la campanita para ver tus posts y comentarte.</p>
+                    <p className="text-xs text-slate-500">Ya te sigo. Estaré atento a tus posts para comentar y darte visibilidad.</p>
                   </div>
 
                   <div className="bg-white/5 p-8 rounded-3xl border border-white/10 flex flex-col items-center text-center gap-4 group hover:bg-white/10 transition-all">
                     <div className="w-12 h-12 bg-pink-500/20 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
                       <Sparkles className="w-6 h-6 text-pink-400" />
                     </div>
-                    <h4 className="text-white font-bold">Feedback Mutuo</h4>
-                    <p className="text-xs text-slate-500">Si aplicas algo de lo que hablamos y te sirve, ¡cuéntamelo!</p>
+                    <h4 className="text-white font-bold">Feedback</h4>
+                    <p className="text-xs text-slate-500">Si aplicas algo de lo que hablamos y te sirve, ¡no dudes en contármelo!</p>
                   </div>
 
                   <div className="bg-white/5 p-8 rounded-3xl border border-white/10 flex flex-col items-center text-center gap-4 group hover:bg-white/10 transition-all">
                     <div className="w-12 h-12 bg-emerald-500/20 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
                       <Mail className="w-6 h-6 text-emerald-400" />
                     </div>
-                    <h4 className="text-white font-bold">Asesoría Directa</h4>
-                    <p className="text-xs text-slate-500">Escríbeme por email si necesitas algo puntual: ferpilot.ia@gmail.com</p>
+                    <h4 className="text-white font-bold">Email Directo</h4>
+                    <p className="text-xs text-slate-500">Para cualquier duda puntual o formal: ferpilot.ia@gmail.com</p>
                   </div>
                 </div>
               </div>
@@ -451,7 +489,7 @@ CÓMO QUIERO QUE ME RESPONDAS:
           <ContactLink icon={<Mail className="w-4 h-4"/>} label="Email" url="mailto:ferpilot.ia@gmail.com" />
         </div>
         <p>© 2025 Human-OS // Fer Berdugo</p>
-        <p className="mt-1">Dossier de Re-incubación para Fernanda Villanueva</p>
+        <p className="mt-1">Dossier de Re-incubación para Sergio Moro González</p>
       </footer>
     </div>
   );
@@ -547,6 +585,39 @@ const MissionCard = ({ title, price, period, desc, cta, featured, onClick }: any
     <button onClick={onClick} className={`w-full py-4 rounded-2xl font-space font-bold uppercase tracking-widest text-[10px] transition-all ${featured ? 'bg-indigo-500 text-white hover:bg-indigo-400 shadow-lg shadow-indigo-500/20' : 'bg-white/10 text-white hover:bg-white/20'}`}>
       {cta}
     </button>
+  </div>
+);
+
+const PlanMonth = ({ month, title, tasks, secondaryTasks }: any) => (
+  <div className="p-10 bg-white/5 rounded-[2.5rem] border border-white/10">
+    <div className="flex flex-col md:flex-row gap-8">
+      <div className="md:w-1/4">
+        <span className="text-sm font-space font-bold text-indigo-400 tracking-widest uppercase">{month}</span>
+        <h4 className="text-2xl font-space font-bold text-white uppercase leading-tight mt-2">{title}</h4>
+      </div>
+      <div className="md:w-3/4 grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div>
+          <h5 className="text-[10px] text-slate-500 uppercase font-bold tracking-widest mb-4">Misiones Críticas</h5>
+          <ul className="space-y-3">
+            {tasks.map((task: string, i: number) => (
+              <li key={i} className="flex gap-3 text-xs text-slate-300">
+                <Check className="w-4 h-4 text-emerald-400 shrink-0" /> {task}
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div>
+          <h5 className="text-[10px] text-slate-500 uppercase font-bold tracking-widest mb-4">Aceleración</h5>
+          <ul className="space-y-3">
+            {secondaryTasks.map((task: string, i: number) => (
+              <li key={i} className="flex gap-3 text-xs text-slate-400 italic">
+                <Rocket className="w-4 h-4 text-indigo-500 shrink-0" /> {task}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
   </div>
 );
 
