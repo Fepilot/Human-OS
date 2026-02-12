@@ -187,7 +187,7 @@ const App: React.FC = () => {
                     <li className="flex gap-3">🛑 <p>Falta de experiencia práctica en el sector (inicio).</p></li>
                     <li className="flex gap-3">🌀 <p>Sobre-reflexión que deriva en parálisis por análisis.</p></li>
                     <li className="flex gap-3">❓ <p>Dudas sobre el nicho: ¿Marketing? ¿Música? ¿Ambos?</p></li>
-                    <li className="flex gap-3">🔋 <p>Incertidumbre del salto formación -> laboral.</p></li>
+                    <li className="flex gap-3">🔋 <p>Incertidumbre del salto formación → laboral.</p></li>
                   </ul>
                 </SectionBlock>
               </div>
